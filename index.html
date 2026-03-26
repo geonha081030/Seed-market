@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>School Market</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="auth">
+  <h2>로그인</h2>
+  <input id="email" type="email" placeholder="이메일"><br>
+  <input id="password" type="password" placeholder="비밀번호"><br>
+  <button onclick="login()">로그인</button>
+  <button onclick="signUp()">회원가입</button>
+</div>
+
+<div id="menu" style="display:none;">
+  <h2>메뉴</h2>
+  <button onclick="location.href='add.html'">상품 등록</button>
+  <button onclick="location.href='list.html'">상품 목록</button>
+  <button onclick="logout()">로그아웃</button>
+</div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
