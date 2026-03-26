@@ -1,13 +1,11 @@
-/* -------------------- 버튼 전체 스타일 -------------------- */
 button {
   padding: 12px 24px;      /* 위아래 12px, 좌우 24px */
   font-size: 18px;          /* 글씨 크기 */
   border-radius: 8px;       /* 둥근 모서리 */
   cursor: pointer;
-  margin: 4px;
+  margin: 8px 6px;          /* 위아래 8px, 좌우 6px → 버튼 간격 확보 */
 }
 
-/* 개별 버튼 스타일 */
 .chat-btn {
   background-color: #4CAF50;
   color: white;
