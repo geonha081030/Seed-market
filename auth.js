@@ -46,7 +46,7 @@ window.logout = async function(){
   }
 }
 
-// 로그인 상태 감시
+// 로그인 상태 감시 (페이지 새로고침 시 자동 화면 전환)
 onAuthStateChanged(auth, user => {
   if(user && user.emailVerified){
     window.showMainScreen();
