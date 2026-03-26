@@ -1,3 +1,4 @@
+// -------------------- Firebase SDK --------------------
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
 import { 
   getAuth, 
@@ -53,20 +54,34 @@ onAuthStateChanged(auth, (user) => {
 
 // -------------------- 회원가입 --------------------
 window.signUp = async () => {
-  const email = val("email");
-  const password = val("password");
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
   if (!email || !password) return alert("이메일과 비밀번호를 입력하세요");
-  const user = await createUserWithEmailAndPassword(auth, email, password);
-  await sendEmailVerification(user.user);
-  alert("회원가입 완료! 이메일 인증 후 로그인하세요");
+
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    await sendEmailVerification(userCredential.user);
+    alert("회원가입 완료! 이메일 인증 후 로그인하세요");
+    document.getElementById("email").value = "";
+    document.getElementById("password").value = "";
+  } catch (error) {
+    console.error("회원가입 오류:", error);
+    alert(error.message);
+  }
 };
 
 // -------------------- 로그인 --------------------
 window.login = async () => {
-  const email = val("email");
-  const password = val("password");
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
   if (!email || !password) return alert("이메일과 비밀번호를 입력하세요");
-  await signInWithEmailAndPassword(auth, email, password);
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (error) {
+    console.error("로그인 오류:", error);
+    alert(error.message);
+  }
 };
 
 // -------------------- 로그아웃 --------------------
@@ -98,7 +113,7 @@ window.addItemWithImage = async () => {
   loadItems();
 };
 
-// -------------------- 상품 목록 --------------------
+// -------------------- 상품 목록 + 검색 --------------------
 function loadItems(searchText = "") {
   const q = query(collection(db, "items"), orderBy("createdAt", "desc"));
   onSnapshot(q, (snapshot) => {
@@ -108,6 +123,8 @@ function loadItems(searchText = "") {
     snapshot.forEach(docSnap => {
       const d = docSnap.data();
       const id = docSnap.id;
+
+      // 검색 필터
       if (searchText) {
         const titleLower = d.title.toLowerCase();
         const searchLower = searchText.toLowerCase();
@@ -127,7 +144,7 @@ function loadItems(searchText = "") {
   });
 }
 
-// -------------------- 검색 기능 --------------------
+// -------------------- 검색 버튼 --------------------
 window.searchItems = () => {
   const text = val("searchInput");
   loadItems(text);
