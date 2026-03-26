@@ -1,34 +1,23 @@
 // product.js
-import { db, storage, auth, collection, addDoc, ref, uploadBytes, getDownloadURL } from './firebase-config.js';
+import { db, storage, auth } from './firebase-config.js';
+import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-storage.js";
 
 export async function addProduct(title, price, description, file){
-  if(!auth.currentUser || !auth.currentUser.emailVerified){
-    alert("이메일 인증 후 이용 가능합니다.");
-    return;
+  let imageUrl = "";
+
+  if(file){
+    const storageRef = ref(storage, 'products/' + Date.now() + "_" + file.name);
+    const snapshot = await uploadBytes(storageRef, file);
+    imageUrl = await getDownloadURL(snapshot.ref);
   }
 
-  try{
-    let imageUrl="";
-    if(file){
-      const storageRef = ref(storage, `seed-products/${Date.now()}_${file.name}`);
-      await uploadBytes(storageRef, file);
-      imageUrl = await getDownloadURL(storageRef);
-    }
-
-    const createdAt = new Date().toISOString();
-
-    await addDoc(collection(db,"seed-products"),{
-      title,
-      price,
-      description,
-      imageUrl,
-      sellerEmail: auth.currentUser.email,
-      tradeMethod: "직거래",
-      createdAt
-    });
-
-    alert("상품 등록 완료!");
-  } catch(e){
-    alert("상품 등록 실패: "+e.message);
-  }
+  await addDoc(collection(db, "products"), {
+    title,
+    price,
+    description,
+    imageUrl,
+    sellerEmail: auth.currentUser.email,
+    createdAt: serverTimestamp()
+  });
 }
