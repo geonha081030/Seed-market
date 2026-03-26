@@ -53,8 +53,8 @@ onAuthStateChanged(auth, (user) => {
   if (user) { // 이메일 인증 없이 바로 로그인 허용
     document.getElementById("auth").style.display = "none";
     document.getElementById("app").style.display = "block";
-    showSection("listSection"); // 목록 먼저 표시
-    loadItems(); 
+    showSection("listSection"); // 목록 화면 먼저 표시
+    loadItems();
   } else {
     document.getElementById("auth").style.display = "block";
     document.getElementById("app").style.display = "none";
@@ -131,9 +131,13 @@ window.addItemWithImage = async () => {
     });
 
     clear("title","price","image");
-    alert("상품 등록 완료!");
+
+    // 등록 완료 팝업 표시
+    document.getElementById("successPopup").style.display = "block";
+
+    // 상품 목록 새로고침
     loadItems();
-    showSection("listSection");
+
   } catch (error) {
     console.error("상품 등록 오류:", error);
     alert(error.message);
@@ -212,7 +216,7 @@ window.startChat = async (itemId, sellerId) => {
     currentRoomId = room.id;
   }
 
-  // 다른 화면으로 이동
+  // 채팅 화면 이동
   window.location.href = `chat.html?roomId=${currentRoomId}`;
 };
 
@@ -249,6 +253,12 @@ function loadMessages(roomId) {
     div.scrollTop = div.scrollHeight;
   });
 }
+
+// -------------------- 팝업 닫기 --------------------
+window.closePopup = () => {
+  document.getElementById("successPopup").style.display = "none";
+  showSection("listSection");
+};
 
 // -------------------- 유틸 --------------------
 function val(id) { return document.getElementById(id).value; }
