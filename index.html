@@ -43,6 +43,7 @@
 
 <!-- 메인 화면 -->
 <section id="main-screen" style="display:none;">
+  <button onclick="logout()">로그아웃</button>
   <button onclick="showRegisterScreen()">상품 등록</button>
   <h2>상품 목록</h2>
   <div id="product-list"></div>
@@ -73,7 +74,7 @@
 <script type="module">
 import { showProducts, showDetail } from './product-list.js';
 import { addProduct } from './product.js';
-import { login, signUp } from './auth.js';
+import { login, signUp, logout } from './auth.js';
 import { sendMessage, showChat } from './chat.js';
 
 let currentProductId="";
