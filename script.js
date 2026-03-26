@@ -13,14 +13,14 @@ import {
   getFirestore,
   collection,
   addDoc,
+  doc,
+  updateDoc,
   query,
   orderBy,
   onSnapshot,
   where,
   getDocs,
-  serverTimestamp,
-  doc,
-  updateDoc
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 import {
@@ -50,11 +50,9 @@ let currentRoomId = null;
 
 // -------------------- 로그인 상태 --------------------
 onAuthStateChanged(auth, (user) => {
-  if (user) { // 이메일 인증 없이 바로 로그인 허용
+  if (user) {
     document.getElementById("auth").style.display = "none";
     document.getElementById("app").style.display = "block";
-    showSection("listSection"); // 목록 화면 먼저 표시
-    loadItems();
   } else {
     document.getElementById("auth").style.display = "block";
     document.getElementById("app").style.display = "none";
@@ -72,7 +70,6 @@ window.signUp = async () => {
     await sendEmailVerification(userCredential.user);
     alert("회원가입 완료! 이메일 인증 후 로그인하세요.");
   } catch (error) {
-    console.error("회원가입 오류:", error);
     alert(error.message);
   }
 };
@@ -91,15 +88,12 @@ window.login = async () => {
       return;
     }
   } catch (error) {
-    console.error("로그인 오류:", error);
     alert(error.message);
   }
 };
 
 // -------------------- 로그아웃 --------------------
-window.logout = async () => {
-  await signOut(auth);
-};
+window.logout = async () => { await signOut(auth); };
 
 // -------------------- 화면 전환 --------------------
 window.showSection = (id) => {
@@ -113,7 +107,6 @@ window.addItemWithImage = async () => {
   const title = val("title");
   const price = val("price");
   const file = document.getElementById("image").files[0];
-
   if (!title || !price || !file) return alert("모든 항목을 입력하세요");
 
   try {
@@ -131,22 +124,18 @@ window.addItemWithImage = async () => {
     });
 
     clear("title","price","image");
-
-    // 등록 완료 팝업 표시
     document.getElementById("successPopup").style.display = "block";
-
-    // 상품 목록 새로고침
-    loadItems();
-
   } catch (error) {
-    console.error("상품 등록 오류:", error);
     alert(error.message);
   }
 };
 
+// -------------------- 팝업 닫기 --------------------
+window.closePopup = () => { document.getElementById("successPopup").style.display = "none"; };
+
 // -------------------- 상품 목록 --------------------
 function loadItems(searchText = "") {
-  const q = query(collection(db, "items"), orderBy("createdAt", "desc"));
+  const q = query(collection(db, "items"), orderBy("createdAt","desc"));
 
   onSnapshot(q, (snapshot) => {
     const div = document.getElementById("items");
@@ -159,7 +148,7 @@ function loadItems(searchText = "") {
       if (searchText && !d.title.toLowerCase().includes(searchText.toLowerCase())) return;
 
       div.innerHTML += `
-        <div style="margin-bottom:10px; border:1px solid #ccc; padding:10px;">
+        <div>
           <img src="${d.imageUrl}" width="100">
           <div>${d.title} - ${d.price}원</div>
           <div>상태: ${d.status}</div>
@@ -174,10 +163,7 @@ function loadItems(searchText = "") {
 }
 
 // -------------------- 검색 --------------------
-window.searchItems = () => {
-  const text = val("searchInput");
-  loadItems(text);
-};
+window.searchItems = () => { loadItems(val("searchInput")); };
 
 // -------------------- 거래 완료 --------------------
 window.markAsSold = async (itemId) => {
@@ -185,10 +171,7 @@ window.markAsSold = async (itemId) => {
     const docRef = doc(db, "items", itemId);
     await updateDoc(docRef, { status: "거래완료" });
     alert("거래 완료 처리됨");
-  } catch (error) {
-    console.error("거래 완료 오류:", error);
-    alert(error.message);
-  }
+  } catch (error) { alert(error.message); }
 };
 
 // -------------------- 1:1 채팅 --------------------
@@ -204,60 +187,13 @@ window.startChat = async (itemId, sellerId) => {
 
   const snap = await getDocs(q);
 
-  if (!snap.empty) {
-    currentRoomId = snap.docs[0].id;
-  } else {
-    const room = await addDoc(collection(db, "chatRooms"), {
-      itemId,
-      sellerId,
-      buyerId,
-      createdAt: serverTimestamp()
-    });
+  if (!snap.empty) currentRoomId = snap.docs[0].id;
+  else {
+    const room = await addDoc(collection(db, "chatRooms"), { itemId, sellerId, buyerId, createdAt: serverTimestamp() });
     currentRoomId = room.id;
   }
 
-  // 채팅 화면 이동
   window.location.href = `chat.html?roomId=${currentRoomId}`;
-};
-
-// -------------------- 메시지 보내기 --------------------
-window.sendChatMessage = async () => {
-  const text = val("messageInput");
-  if (!text || !currentRoomId) return;
-
-  await addDoc(collection(db, `chatRooms/${currentRoomId}/messages`), {
-    senderId: auth.currentUser.uid,
-    text,
-    createdAt: serverTimestamp()
-  });
-
-  clear("messageInput");
-};
-
-// -------------------- 메시지 로딩 --------------------
-function loadMessages(roomId) {
-  currentRoomId = roomId;
-
-  const q = query(collection(db, `chatRooms/${roomId}/messages`), orderBy("createdAt"));
-
-  onSnapshot(q, (snapshot) => {
-    const div = document.getElementById("chat");
-    div.innerHTML = "";
-
-    snapshot.forEach(docSnap => {
-      const m = docSnap.data();
-      const me = m.senderId === auth.currentUser.uid;
-      div.innerHTML += `<div>${me ? "나" : "상대"}: ${m.text}</div>`;
-    });
-
-    div.scrollTop = div.scrollHeight;
-  });
-}
-
-// -------------------- 팝업 닫기 --------------------
-window.closePopup = () => {
-  document.getElementById("successPopup").style.display = "none";
-  showSection("listSection");
 };
 
 // -------------------- 유틸 --------------------
