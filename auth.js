@@ -1,5 +1,5 @@
 // auth.js
-import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, onAuthStateChanged } from './firebase-config.js';
+import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification } from './firebase-config.js';
 
 export async function signUp(email, password){
   try{
@@ -22,8 +22,4 @@ export async function login(email, password){
   } catch(e){
     alert("로그인 실패: "+e.message);
   }
-}
-
-export function observeAuthState(callback){
-  onAuthStateChanged(auth, callback);
 }
