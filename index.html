@@ -114,19 +114,37 @@ window.showRegisterScreen=function(){
   document.getElementById("register-screen").style.display="block";
 }
 
-window.submitProduct=async function(){
-  const title=document.getElementById("title").value;
-  const price=document.getElementById("price").value;
-  const description=document.getElementById("description").value;
-  const file=document.getElementById("file").files[0];
-  if(!title || !price){ alert("상품명과 가격은 필수"); return; }
-  await addProduct(title,price,description,file);
-  showMainScreen();
-  showProducts();
-  document.getElementById("title").value="";
-  document.getElementById("price").value="";
-  document.getElementById("description").value="";
-  document.getElementById("file").value="";
+// 상품 등록 함수 + 알림
+window.submitProduct = async function(){
+  const title = document.getElementById("title").value;
+  const price = document.getElementById("price").value;
+  const description = document.getElementById("description").value;
+  const file = document.getElementById("file").files[0];
+
+  if(!title || !price){
+    alert("상품명과 가격은 필수입니다.");
+    return;
+  }
+
+  try {
+    await addProduct(title, price, description, file);
+
+    // 등록 완료 알림
+    alert("상품이 성공적으로 등록되었습니다!");
+
+    // 화면 전환 및 목록 갱신
+    showMainScreen();
+    showProducts();
+
+    // 입력 초기화
+    document.getElementById("title").value = "";
+    document.getElementById("price").value = "";
+    document.getElementById("description").value = "";
+    document.getElementById("file").value = "";
+
+  } catch(e) {
+    alert("상품 등록 중 오류 발생: " + e.message);
+  }
 }
 
 window.showDetailScreen=async function(id){
