@@ -1,9 +1,10 @@
+/* -------------------- 버튼 전체 스타일 -------------------- */
 button {
-  padding: 12px 24px;      /* 위아래 12px, 좌우 24px */
-  font-size: 18px;          /* 글씨 크기 */
-  border-radius: 8px;       /* 둥근 모서리 */
+  padding: 12px 24px;
+  font-size: 18px;
+  border-radius: 8px;
   cursor: pointer;
-  margin: 8px 6px;          /* 위아래 8px, 좌우 6px → 버튼 간격 확보 */
+  margin: 8px 6px;
 }
 
 .chat-btn {
@@ -19,4 +20,19 @@ button {
 .search-btn {
   background-color: #2196F3;
   color: white;
+}
+
+/* -------------------- 입력칸 크기 확대 -------------------- */
+input[type="text"], input[type="number"], input[type="email"], input[type="password"], textarea {
+  padding: 10px 12px;
+  font-size: 18px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin: 6px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+textarea {
+  resize: vertical;
 }
