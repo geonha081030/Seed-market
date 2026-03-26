@@ -1,0 +1,207 @@
+// -------------------- Firebase SDK --------------------
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+  sendEmailVerification
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  query,
+  orderBy,
+  onSnapshot,
+  where,
+  getDocs,
+  doc,
+  updateDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-storage.js";
+
+// -------------------- Firebase 설정 --------------------
+const firebaseConfig = {
+  apiKey: "AIzaSyAUql6jS2F-6tF_8edoNVjDwL1x61KyNKw",
+  authDomain: "school-market-5145f.firebaseapp.com",
+  projectId: "school-market-5145f",
+  storageBucket: "school-market-5145f.firebasestorage.app",
+  messagingSenderId: "379957410055",
+  appId: "1:379957410055:web:26badd05483dc97bb82da2"
+};
+
+// -------------------- 초기화 --------------------
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+let currentRoomId = null;
+
+// -------------------- 로그인 상태 --------------------
+onAuthStateChanged(auth, (user) => {
+  if (user && user.emailVerified) {
+    const authDiv = document.getElementById("auth");
+    if(authDiv) authDiv.style.display = "none";
+    const menuDiv = document.getElementById("menu");
+    if(menuDiv) menuDiv.style.display = "block";
+  } else {
+    const authDiv = document.getElementById("auth");
+    if(authDiv) authDiv.style.display = "block";
+    const menuDiv = document.getElementById("menu");
+    if(menuDiv) menuDiv.style.display = "none";
+  }
+});
+
+// -------------------- 회원가입 --------------------
+window.signUp = async () => {
+  const email = val("email");
+  const password = val("password");
+  if(!email || !password) return alert("모두 입력");
+  const user = await createUserWithEmailAndPassword(auth, email, password);
+  await sendEmailVerification(user.user);
+  alert("이메일 인증 후 로그인");
+};
+
+// -------------------- 로그인 --------------------
+window.login = async () => {
+  const email = val("email");
+  const password = val("password");
+  if(!email || !password) return alert("모두 입력");
+  await signInWithEmailAndPassword(auth, email, password);
+};
+
+// -------------------- 로그아웃 --------------------
+window.logout = async () => {
+  await signOut(auth);
+  location.href = "index.html";
+};
+
+// -------------------- 상품 등록 --------------------
+window.addItemWithImage = async () => {
+  const title = val("title");
+  const price = val("price");
+  const category = val("category");
+  const file = document.getElementById("image")?.files[0];
+
+  if(!title || !price || !file) return alert("모두 입력");
+
+  const fileRef = ref(storage, `items/${Date.now()}_${file.name}`);
+  await uploadBytes(fileRef, file);
+  const imageUrl = await getDownloadURL(fileRef);
+
+  await addDoc(collection(db, "items"), {
+    title,
+    price: Number(price),
+    imageUrl,
+    sellerId: auth.currentUser.uid,
+    status: "판매중",
+    category,
+    createdAt: serverTimestamp()
+  });
+
+  clear("title","price","image","category");
+  alert("상품 등록 완료");
+};
+
+// -------------------- 상품 목록 --------------------
+window.loadItems = async () => {
+  const search = val("search")?.toLowerCase();
+  const categoryFilter = val("categoryFilter");
+  let q = query(collection(db,"items"), orderBy("createdAt","desc"));
+
+  onSnapshot(q, snapshot => {
+    const div = document.getElementById("items");
+    if(!div) return;
+    div.innerHTML = "";
+
+    snapshot.forEach(docSnap => {
+      const d = docSnap.data();
+      const id = docSnap.id;
+      if(search && !d.title.toLowerCase().includes(search)) return;
+      if(categoryFilter && d.category !== categoryFilter) return;
+
+      div.innerHTML += `
+        <div style="border:1px solid #000;margin:5px;padding:5px;">
+          <img src="${d.imageUrl}" width="100"><br>
+          ${d.title} - ${d.price}원<br>
+          ${d.category}<br>
+          상태: ${d.status}<br>
+          ${auth.currentUser.uid===d.sellerId?`<button onclick="completeItem('${id}')">거래 완료</button>`:''}
+          <button onclick="startChat('${id}','${d.sellerId}')">채팅</button>
+        </div>
+      `;
+    });
+  });
+};
+
+// -------------------- 거래 완료 --------------------
+window.completeItem = async (itemId) => {
+  const refDoc = doc(db,"items",itemId);
+  await updateDoc(refDoc,{status:"판매완료"});
+  alert("거래 완료 처리됨");
+};
+
+// -------------------- 1:1 채팅 --------------------
+window.startChat = async (itemId, sellerId) => {
+  const buyerId = auth.currentUser.uid;
+  let q = query(collection(db,"chatRooms"),
+                where("itemId","==",itemId),
+                where("sellerId","==",sellerId),
+                where("buyerId","==",buyerId));
+  const snap = await getDocs(q);
+
+  if(!snap.empty){
+    currentRoomId = snap.docs[0].id;
+  } else {
+    const room = await addDoc(collection(db,"chatRooms"),{
+      itemId,
+      sellerId,
+      buyerId,
+      createdAt: serverTimestamp()
+    });
+    currentRoomId = room.id;
+  }
+
+  location.href = `chat.html?roomId=${currentRoomId}`;
+};
+
+// -------------------- 메시지 보내기 --------------------
+window.sendChatMessage = async () => {
+  const text = val("messageInput");
+  if(!text || !currentRoomId) return;
+  await addDoc(collection(db,`chatRooms/${currentRoomId}/messages`),{
+    senderId: auth.currentUser.uid,
+    text,
+    createdAt: serverTimestamp(),
+    read:false
+  });
+  clear("messageInput");
+};
+
+// -------------------- 메시지 로딩 (chat.html) --------------------
+export function loadChatMessages(roomId){
+  const q = query(collection(db,`chatRooms/${roomId}/messages`),orderBy("createdAt"));
+  onSnapshot(q,snapshot=>{
+    const div = document.getElementById("chat");
+    if(!div) return;
+    div.innerHTML = "";
+    snapshot.forEach(docSnap=>{
+      const m = docSnap.data();
+      const me = m.senderId===auth.currentUser.uid;
+      div.innerHTML += `<div>${me?"나":"상대"}: ${m.text}</div>`;
+    });
+    div.scrollTop = div.scrollHeight;
+  });
+}
+
+// -------------------- 유틸 --------------------
+function val(id){ return document.getElementById(id)?.value; }
+function clear(...ids){ ids.forEach(id=>document.getElementById(id)?.value=""); }
