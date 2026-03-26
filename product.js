@@ -3,7 +3,7 @@ import { db, storage, auth } from './firebase-config.js';
 import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-storage.js";
 
-export async function addProduct(title, price, description, file){
+window.addProduct = async function(title, price, description, file){
   let imageUrl = "";
 
   if(file){
