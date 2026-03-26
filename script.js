@@ -1,4 +1,3 @@
-// -------------------- Firebase SDK --------------------
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
 import {
   getAuth,
@@ -8,7 +7,6 @@ import {
   signOut,
   sendEmailVerification
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-
 import {
   getFirestore,
   collection,
@@ -23,7 +21,7 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-// -------------------- Firebase 설정 --------------------
+// Firebase 설정
 const firebaseConfig = {
   apiKey: "AIzaSyDWRr2ex8Pxat6juTNfk42nVkxN_5QkRxg",
   authDomain: "seedmarket-2d350.firebaseapp.com",
@@ -33,25 +31,25 @@ const firebaseConfig = {
   appId: "1:219597982647:web:2604bef7220cd2e668b632"
 };
 
-// -------------------- 초기화 --------------------
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
 let currentRoomId = null;
 
-// -------------------- 로그인 상태 --------------------
+// 로그인 상태 체크
 onAuthStateChanged(auth, (user) => {
   if (user) {
     document.getElementById("auth").style.display = "none";
     document.getElementById("app").style.display = "block";
+    loadItems();
   } else {
     document.getElementById("auth").style.display = "block";
     document.getElementById("app").style.display = "none";
   }
 });
 
-// -------------------- 회원가입 --------------------
+// 회원가입
 window.signUp = async () => {
   const email = val("email");
   const password = val("password");
@@ -61,12 +59,10 @@ window.signUp = async () => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     await sendEmailVerification(userCredential.user);
     alert("회원가입 완료! 이메일 인증 후 로그인하세요.");
-  } catch (error) {
-    alert(error.message);
-  }
+  } catch (error) { alert(error.message); }
 };
 
-// -------------------- 로그인 --------------------
+// 로그인
 window.login = async () => {
   const email = val("email");
   const password = val("password");
@@ -79,22 +75,20 @@ window.login = async () => {
       await signOut(auth);
       return;
     }
-  } catch (error) {
-    alert(error.message);
-  }
+  } catch (error) { alert(error.message); }
 };
 
-// -------------------- 로그아웃 --------------------
+// 로그아웃
 window.logout = async () => { await signOut(auth); };
 
-// -------------------- 화면 전환 --------------------
+// 화면 전환
 window.showSection = (id) => {
   document.getElementById("registerSection").style.display = "none";
   document.getElementById("listSection").style.display = "none";
   document.getElementById(id).style.display = "block";
 };
 
-// -------------------- 상품 등록 (사진 없음) --------------------
+// 상품 등록 (사진 없음)
 window.addItem = async () => {
   const title = val("title");
   const price = val("price");
@@ -112,15 +106,13 @@ window.addItem = async () => {
     clear("title","price");
     document.getElementById("successPopup").style.display = "block";
     loadItems();
-  } catch (error) {
-    alert(error.message);
-  }
+  } catch (error) { alert(error.message); }
 };
 
-// -------------------- 팝업 닫기 --------------------
+// 팝업 닫기
 window.closePopup = () => { document.getElementById("successPopup").style.display = "none"; };
 
-// -------------------- 상품 목록 --------------------
+// 상품 목록
 function loadItems(searchText = "") {
   const q = query(collection(db, "items"), orderBy("createdAt","desc"));
 
@@ -148,10 +140,10 @@ function loadItems(searchText = "") {
   });
 }
 
-// -------------------- 검색 --------------------
+// 검색
 window.searchItems = () => { loadItems(val("searchInput")); };
 
-// -------------------- 거래 완료 --------------------
+// 거래 완료
 window.markAsSold = async (itemId) => {
   try {
     const docRef = doc(db, "items", itemId);
@@ -160,7 +152,7 @@ window.markAsSold = async (itemId) => {
   } catch (error) { alert(error.message); }
 };
 
-// -------------------- 1:1 채팅 --------------------
+// 1:1 채팅
 window.startChat = async (itemId, sellerId) => {
   const buyerId = auth.currentUser.uid;
 
@@ -182,6 +174,6 @@ window.startChat = async (itemId, sellerId) => {
   window.location.href = `chat.html?roomId=${currentRoomId}`;
 };
 
-// -------------------- 유틸 --------------------
+// 유틸
 function val(id) { return document.getElementById(id).value; }
 function clear(...ids) { ids.forEach(id => document.getElementById(id).value = ""); }
