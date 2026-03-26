@@ -4,7 +4,7 @@ button {
   font-size: 18px;
   border-radius: 8px;
   cursor: pointer;
-  margin: 8px 6px;
+  margin: 8px 6px; /* 버튼 간격 확보 */
 }
 
 .chat-btn {
