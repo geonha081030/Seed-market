@@ -1,8 +1,29 @@
 <script type="module">
 // -------------------- Firebase SDK --------------------
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, where, getDocs, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+import { 
+  getAuth, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  onAuthStateChanged, 
+  signOut, 
+  sendEmailVerification 
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+
+import { 
+  getFirestore, 
+  collection, 
+  addDoc, 
+  doc,
+  query, 
+  orderBy, 
+  onSnapshot, 
+  where, 
+  getDocs, 
+  updateDoc, 
+  serverTimestamp 
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-storage.js";
 
 // -------------------- Firebase 설정 --------------------
@@ -23,7 +44,7 @@ const storage = getStorage(app);
 
 let currentRoomId = null;
 
-// -------------------- 로그인 상태 감지 --------------------
+// -------------------- 로그인 상태 --------------------
 onAuthStateChanged(auth, (user) => {
   if (user && user.emailVerified) {
     document.getElementById("auth").style.display = "none";
@@ -45,7 +66,7 @@ window.signUp = async () => {
   const user = await createUserWithEmailAndPassword(auth, email, password);
   await sendEmailVerification(user.user);
 
-  alert("이메일 인증 후 로그인하세요");
+  alert("회원가입 완료! 이메일 인증 후 로그인하세요");
 };
 
 // -------------------- 로그인 --------------------
@@ -100,8 +121,12 @@ function loadItems(searchText = "") {
       const d = docSnap.data();
       const id = docSnap.id;
 
-      // 검색 기능
-      if (searchText && !d.title.toLowerCase().includes(searchText.toLowerCase())) return;
+      // 검색 필터 + 연관검색어
+      if (searchText) {
+        const titleLower = d.title.toLowerCase();
+        const searchLower = searchText.toLowerCase();
+        if (!titleLower.includes(searchLower)) return;
+      }
 
       div.innerHTML += `
         <div>
@@ -124,11 +149,7 @@ window.searchItems = () => {
 
 // -------------------- 거래 완료 --------------------
 window.markAsSold = async (itemId) => {
-  const docRef = collection(db, "items");
-  const docSnap = await getDocs(query(docRef, where("__name__", "==", itemId)));
-  if (!docSnap.empty) {
-    await updateDoc(doc(db, "items", itemId), { status: "판매완료" });
-  }
+  await updateDoc(doc(db, "items", itemId), { status: "판매완료" });
 };
 
 // -------------------- 1:1 채팅 --------------------
