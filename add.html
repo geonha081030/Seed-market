@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>상품 등록</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h2>상품 등록</h2>
+<input id="title" type="text" placeholder="상품명"><br>
+<input id="price" type="number" placeholder="가격"><br>
+<select id="category">
+  <option value="">카테고리 선택</option>
+  <option value="문구">문구</option>
+  <option value="책">책</option>
+  <option value="전자기기">전자기기</option>
+</select><br>
+<input id="image" type="file"><br>
+<button onclick="addItemWithImage()">등록</button>
+<button onclick="location.href='index.html'">메뉴로</button>
+<script type="module" src="script.js"></script>
+</body>
+</html>
