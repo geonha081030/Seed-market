@@ -23,13 +23,6 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-import {
-  getStorage,
-  ref,
-  uploadBytes,
-  getDownloadURL
-} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-storage.js";
-
 // -------------------- Firebase 설정 --------------------
 const firebaseConfig = {
   apiKey: "AIzaSyDWRr2ex8Pxat6juTNfk42nVkxN_5QkRxg",
@@ -44,7 +37,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
 let currentRoomId = null;
 
@@ -102,29 +94,24 @@ window.showSection = (id) => {
   document.getElementById(id).style.display = "block";
 };
 
-// -------------------- 상품 등록 --------------------
-window.addItemWithImage = async () => {
+// -------------------- 상품 등록 (사진 없음) --------------------
+window.addItem = async () => {
   const title = val("title");
   const price = val("price");
-  const file = document.getElementById("image").files[0];
-  if (!title || !price || !file) return alert("모든 항목을 입력하세요");
+  if (!title || !price) return alert("상품명과 가격을 입력하세요");
 
   try {
-    const fileRef = ref(storage, `items/${Date.now()}_${file.name}`);
-    await uploadBytes(fileRef, file);
-    const imageUrl = await getDownloadURL(fileRef);
-
     await addDoc(collection(db, "items"), {
       title,
       price: Number(price),
-      imageUrl,
       sellerId: auth.currentUser.uid,
       status: "판매중",
       createdAt: serverTimestamp()
     });
 
-    clear("title","price","image");
+    clear("title","price");
     document.getElementById("successPopup").style.display = "block";
+    loadItems();
   } catch (error) {
     alert(error.message);
   }
@@ -149,7 +136,6 @@ function loadItems(searchText = "") {
 
       div.innerHTML += `
         <div>
-          <img src="${d.imageUrl}" width="100">
           <div>${d.title} - ${d.price}원</div>
           <div>상태: ${d.status}</div>
           <button onclick="startChat('${id}', '${d.sellerId}')">채팅</button>
