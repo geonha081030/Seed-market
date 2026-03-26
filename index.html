@@ -20,7 +20,10 @@
   <input id="login-email" placeholder="이메일">
   <input id="login-password" type="password" placeholder="비밀번호">
   <div>
-    <button onclick="loginAndEnter()">로그인</button>
+    <button onclick="login(
+      document.getElementById('login-email').value,
+      document.getElementById('login-password').value
+    )">로그인</button>
   </div>
   <small style="display:block; margin-top:10px;">
     계정이 없나요? <button onclick="showSignUpScreen()" style="font-size:0.8em;">회원가입</button>
@@ -68,9 +71,9 @@
 </section>
 
 <script type="module">
-import { login, signUp } from './auth.js';
-import { addProduct } from './product.js';
 import { showProducts, showDetail } from './product-list.js';
+import { addProduct } from './product.js';
+import { login, signUp } from './auth.js';
 import { sendMessage, showChat } from './chat.js';
 
 let currentProductId="";
@@ -95,16 +98,6 @@ window.signUpAndBack = async function(){
   await signUp(email,password);
   alert("이메일 인증 후 로그인 화면으로 돌아갑니다.");
   showLoginScreen();
-}
-
-window.loginAndEnter = async function(){
-  const email = document.getElementById("login-email").value;
-  const password = document.getElementById("login-password").value;
-  await login(email,password);
-  const user = firebase.auth().currentUser;
-  if(user && user.emailVerified){
-    showMainScreen();
-  }
 }
 
 window.showMainScreen = function(){
