@@ -2,7 +2,7 @@
 import { db } from './firebase-config.js';
 import { collection, query, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-export async function showProducts(){
+window.showProducts = async function(){
   const listContainer = document.getElementById("product-list");
   listContainer.innerHTML = "";
   const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
@@ -20,7 +20,7 @@ export async function showProducts(){
   });
 }
 
-export async function showDetail(id){
+window.showDetail = async function(id){
   const docRef = collection(db, "products");
   const snapshot = await getDocs(docRef);
   const docSnap = snapshot.docs.find(d => d.id === id);
