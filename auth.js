@@ -12,18 +12,34 @@ window.showLoginScreen = function(){
   document.getElementById("login-screen").style.display = "block";
   document.getElementById("signup-screen").style.display = "none";
   document.getElementById("main-screen").style.display = "none";
+  document.getElementById("product-add-screen").style.display = "none";
+  document.getElementById("product-list-screen").style.display = "none";
 }
 
 window.showSignupScreen = function(){
   document.getElementById("login-screen").style.display = "none";
   document.getElementById("signup-screen").style.display = "block";
   document.getElementById("main-screen").style.display = "none";
+  document.getElementById("product-add-screen").style.display = "none";
+  document.getElementById("product-list-screen").style.display = "none";
 }
 
 window.showMainScreen = function(){
+  document.getElementById("main-screen").style.display = "block";
   document.getElementById("login-screen").style.display = "none";
   document.getElementById("signup-screen").style.display = "none";
-  document.getElementById("main-screen").style.display = "block";
+  document.getElementById("product-add-screen").style.display = "none";
+  document.getElementById("product-list-screen").style.display = "none";
+}
+
+window.showAddProductScreen = function(){
+  document.getElementById("main-screen").style.display = "none";
+  document.getElementById("product-add-screen").style.display = "block";
+}
+
+window.showProductListScreen = function(){
+  document.getElementById("main-screen").style.display = "none";
+  document.getElementById("product-list-screen").style.display = "block";
   if(window.showProducts) window.showProducts();
 }
 
@@ -59,7 +75,7 @@ document.getElementById("login-btn").addEventListener("click", async () => {
   }
 });
 
-// 로그인 상태 감시
+// 자동 로그인 감시
 onAuthStateChanged(auth, user => {
   if(user && user.emailVerified){
     window.showMainScreen();
@@ -79,8 +95,10 @@ document.getElementById("logout-btn").addEventListener("click", async () => {
   }
 });
 
-// 회원가입 화면 이동
+// 화면 전환 버튼
 document.getElementById("show-signup-btn").addEventListener("click", () => window.showSignupScreen());
-
-// 로그인 화면 이동
 document.getElementById("back-to-login-btn").addEventListener("click", () => window.showLoginScreen());
+document.getElementById("go-add-btn").addEventListener("click", () => window.showAddProductScreen());
+document.getElementById("go-list-btn").addEventListener("click", () => window.showProductListScreen());
+document.getElementById("back-main-btn").addEventListener("click", () => window.showMainScreen());
+document.getElementById("back-main-from-list-btn").addEventListener("click", () => window.showMainScreen());
