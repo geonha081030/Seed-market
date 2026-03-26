@@ -18,7 +18,9 @@ import {
   onSnapshot,
   where,
   getDocs,
-  serverTimestamp
+  serverTimestamp,
+  doc,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 import {
@@ -51,7 +53,8 @@ onAuthStateChanged(auth, (user) => {
   if (user) { // 이메일 인증 없이 바로 로그인 허용
     document.getElementById("auth").style.display = "none";
     document.getElementById("app").style.display = "block";
-    loadItems(); // 상품 목록 최신순
+    showSection("listSection"); // 목록 먼저 표시
+    loadItems(); 
   } else {
     document.getElementById("auth").style.display = "block";
     document.getElementById("app").style.display = "none";
@@ -107,9 +110,9 @@ window.showSection = (id) => {
 
 // -------------------- 상품 등록 --------------------
 window.addItemWithImage = async () => {
-const title = document.getElementById("title").value;
-const price = document.getElementById("price").value;
-const file = document.getElementById("image").files[0];
+  const title = val("title");
+  const price = val("price");
+  const file = document.getElementById("image").files[0];
 
   if (!title || !price || !file) return alert("모든 항목을 입력하세요");
 
@@ -130,6 +133,7 @@ const file = document.getElementById("image").files[0];
     clear("title","price","image");
     alert("상품 등록 완료!");
     loadItems();
+    showSection("listSection");
   } catch (error) {
     console.error("상품 등록 오류:", error);
     alert(error.message);
@@ -208,7 +212,7 @@ window.startChat = async (itemId, sellerId) => {
     currentRoomId = room.id;
   }
 
-  // 다른 화면으로 이동 예: chat.html
+  // 다른 화면으로 이동
   window.location.href = `chat.html?roomId=${currentRoomId}`;
 };
 
