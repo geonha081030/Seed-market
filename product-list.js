@@ -2,6 +2,7 @@
 import { db } from './firebase-config.js';
 import { collection, query, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
+// 상품 목록 화면
 window.showProducts = async function(){
   const listContainer = document.getElementById("product-list");
   listContainer.innerHTML = "";
@@ -20,6 +21,7 @@ window.showProducts = async function(){
   });
 }
 
+// 상품 상세 데이터 반환
 window.showDetail = async function(id){
   const docRef = collection(db, "products");
   const snapshot = await getDocs(docRef);
