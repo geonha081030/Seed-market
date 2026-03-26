@@ -28,18 +28,26 @@
   <div id="main-screen" style="display:none;">
     <h2>Seed Market</h2>
     <button id="logout-btn">로그아웃</button>
+    <button id="go-add-btn">상품 등록</button>
+    <button id="go-list-btn">상품 목록</button>
+  </div>
 
-    <!-- 상품 등록 -->
+  <!-- 상품 등록 화면 -->
+  <div id="product-add-screen" style="display:none;">
     <h3>상품 등록</h3>
     <input id="product-title" placeholder="상품명">
     <input id="product-price" type="number" placeholder="가격">
     <textarea id="product-desc" placeholder="상세 설명"></textarea>
     <input id="product-file" type="file">
     <button id="add-product-btn">등록</button>
+    <button id="back-main-btn">메인 화면으로</button>
+  </div>
 
-    <!-- 상품 목록 -->
+  <!-- 상품 목록 화면 -->
+  <div id="product-list-screen" style="display:none;">
     <h3>상품 목록</h3>
     <div id="product-list"></div>
+    <button id="back-main-from-list-btn">메인 화면으로</button>
   </div>
 
   <script type="module" src="firebase-config.js"></script>
