@@ -1,27 +1,28 @@
 // product-list.js
-import { db, collection, getDocs, query, orderBy, doc, getDoc } from './firebase-config.js';
+import { db } from './firebase-config.js';
+import { collection, query, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 export async function showProducts(){
-  const q = query(collection(db, "seed-products"), orderBy("createdAt", "desc"));
-  const productList = document.getElementById("product-list");
-  productList.innerHTML="";
-  const snapshot = await getDocs(q);
-  snapshot.forEach(docSnap=>{
-    const data = docSnap.data();
+  const listContainer = document.getElementById("product-list");
+  listContainer.innerHTML = "";
+  const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach(doc => {
+    const data = doc.data();
     const div = document.createElement("div");
-    div.innerHTML=`
+    div.className = "product-item";
+    div.innerHTML = `
       <h3>${data.title}</h3>
-      <p>가격: ${data.price}원</p>
-      ${data.imageUrl ? `<img src="${data.imageUrl}" style="width:150px">` : ""}
-      <button onclick="showDetailScreen('${docSnap.id}')">상세보기</button>
+      <p>${data.price}원</p>
+      <button onclick="window.showDetailScreen('${doc.id}')">상세보기</button>
     `;
-    productList.appendChild(div);
+    listContainer.appendChild(div);
   });
 }
 
 export async function showDetail(id){
-  const docRef = doc(db,"seed-products",id);
-  const docSnap = await getDoc(docRef);
-  if(docSnap.exists()) return docSnap.data();
-  return {};
+  const docRef = collection(db, "products");
+  const snapshot = await getDocs(docRef);
+  const docSnap = snapshot.docs.find(d => d.id === id);
+  return docSnap ? docSnap.data() : null;
 }
