@@ -107,9 +107,9 @@ window.showSection = (id) => {
 
 // -------------------- 상품 등록 --------------------
 window.addItemWithImage = async () => {
-  const title = val("title");
-  const price = val("price");
-  const file = document.getElementById("image").files[0];
+const title = document.getElementById("title").value;
+const price = document.getElementById("price").value;
+const file = document.getElementById("image").files[0];
 
   if (!title || !price || !file) return alert("모든 항목을 입력하세요");
 
