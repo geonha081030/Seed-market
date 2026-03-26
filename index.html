@@ -62,10 +62,10 @@ import { login } from './auth.js';
 
 let currentProductId="";
 
-// 로그인 후 메인 화면 이동
-window.loginAndEnter = async function(email,password){
+// 로그인 후 메인 화면
+window.loginAndEnter=async function(email,password){
   await login(email,password);
-  const user = firebase.auth().currentUser;
+  const user=firebase.auth().currentUser;
   if(user && user.emailVerified){
     showMainScreen();
   }
@@ -85,7 +85,7 @@ window.showRegisterScreen=function(){
   document.getElementById("register-screen").style.display="block";
 }
 
-// 상품 등록 후 메인 화면으로
+// 상품 등록
 window.submitProduct=async function(){
   const title=document.getElementById("title").value;
   const price=document.getElementById("price").value;
@@ -101,7 +101,7 @@ window.submitProduct=async function(){
   document.getElementById("file").value="";
 }
 
-// 세부 화면 전환
+// 세부 화면
 window.showDetailScreen=async function(id){
   currentProductId=id;
   const data=await showDetail(id);
@@ -118,7 +118,7 @@ window.showDetailScreen=async function(id){
   showChat(currentProductId);
 }
 
-// 채팅 전송
+// 채팅
 window.sendChatMessage=async function(){
   const message=document.getElementById("message").value;
   if(!message) return;
@@ -127,7 +127,7 @@ window.sendChatMessage=async function(){
   document.getElementById("message").value="";
 }
 
-// 초기 화면은 로그인
+// 초기 화면: 로그인
 document.getElementById("login-screen").style.display="block";
 </script>
 
