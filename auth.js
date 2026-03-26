@@ -29,7 +29,7 @@ export async function logout(){
   }
 }
 
-// 로그인 상태 감시 → 메인 화면 자동 전환
+// 로그인 상태 감시 → 인증 완료 시 메인 화면 자동 전환
 onAuthStateChanged(auth, user => {
   if(user && user.emailVerified){
     window.showMainScreen();
