@@ -5,7 +5,14 @@ import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/fireba
 document.addEventListener("DOMContentLoaded", () => {
   const addBtn = document.getElementById("add-product-btn");
 
+  if (!addBtn) {
+    console.error("등록 버튼을 찾을 수 없습니다!");
+    return;
+  }
+
   addBtn.addEventListener("click", async () => {
+    console.log("등록 버튼 클릭 확인"); // 디버깅용
+
     const title = document.getElementById("product-title").value.trim();
     const price = document.getElementById("product-price").value.trim();
     const desc = document.getElementById("product-desc").value.trim();
@@ -24,7 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
         imageUrl = await getDownloadURL(snapshot.ref);
       }
 
-      // Firestore에 저장
       const docRef = await addDoc(collection(db, "products"), {
         title,
         price: Number(price),
@@ -34,11 +40,11 @@ document.addEventListener("DOMContentLoaded", () => {
         createdAt: serverTimestamp()
       });
 
-      console.log("상품 등록 성공, ID:", docRef.id);
+      console.log("Firestore 저장 완료, ID:", docRef.id); // 디버깅용
       alert("상품 등록 완료!");
-      window.showProductListScreen(); // 등록 후 목록 화면으로 이동
+      window.showProductListScreen();
     } catch (e) {
-      console.error("등록 실패:", e);
+      console.error("상품 등록 실패:", e);
       alert("상품 등록 실패: " + e.message);
     }
   });
