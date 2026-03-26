@@ -4,6 +4,7 @@ import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/fireba
 
 document.addEventListener("DOMContentLoaded", () => {
   const addBtn = document.getElementById("add-product-btn");
+
   addBtn.addEventListener("click", async () => {
     const title = document.getElementById("product-title").value;
     const price = document.getElementById("product-price").value;
@@ -17,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       let imageUrl = "";
-      if(file){
+      if (file) {
         const storageRef = ref(storage, 'products/' + Date.now() + "_" + file.name);
         const snapshot = await uploadBytes(storageRef, file);
         imageUrl = await getDownloadURL(snapshot.ref);
@@ -33,8 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       alert("상품 등록 완료!");
-      window.showProductListScreen();
-    } catch(e){
+      window.showProductListScreen(); // 등록 후 목록 화면으로 이동
+    } catch (e) {
       alert("상품 등록 실패: " + e.message);
     }
   });
