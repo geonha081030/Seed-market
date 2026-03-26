@@ -14,6 +14,8 @@ window.showProducts = async function(){
     div.innerHTML = `
       <h3>${data.title}</h3>
       <p>${data.price}원</p>
+      <p>${data.description || ''}</p>
+      ${data.imageUrl ? `<img src="${data.imageUrl}" width="100">` : ''}
     `;
     listContainer.appendChild(div);
   });
