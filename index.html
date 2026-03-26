@@ -13,39 +13,123 @@
 <body>
 
 <h1>Seed 마켓</h1>
-<p>동아리 'Seed' 회원 전용 직거래 마켓</p>
 
-<section>
-  <h2>회원가입 / 로그인</h2>
-  <input id="email" placeholder="이메일">
+<!-- 로그인 화면 -->
+<section id="login-screen">
+  <h2>로그인 / 회원가입</h2>
+  <input id="email" placeholder="학교 이메일">
   <input id="password" type="password" placeholder="비밀번호">
-  <button onclick="signUp(email.value, password.value)">회원가입</button>
-  <button onclick="login(email.value, password.value)">로그인</button>
+  <div>
+    <button onclick="signUp(email.value,password.value)">회원가입</button>
+    <button onclick="loginAndEnter(email.value,password.value)">로그인</button>
+  </div>
 </section>
 
-<section>
-  <h2>상품 등록</h2>
-  <input id="title" placeholder="상품명">
-  <input id="price" placeholder="가격">
-  <input id="description" placeholder="설명">
-  <input id="file" type="file">
-  <button onclick="addProduct(title.value, price.value, description.value, file.files[0])">등록</button>
-</section>
-
-<section>
+<!-- 메인 화면 -->
+<section id="main-screen" style="display:none;">
+  <button onclick="showRegisterScreen()">상품 등록</button>
   <h2>상품 목록</h2>
   <div id="product-list"></div>
   <button onclick="showProducts()">목록 새로고침</button>
 </section>
 
-<section>
-  <h2>채팅</h2>
-  <input id="productId" placeholder="상품 ID">
+<!-- 등록 화면 -->
+<section id="register-screen" style="display:none;">
+  <h2>상품 등록</h2>
+  <input id="title" placeholder="상품명">
+  <input id="price" placeholder="가격">
+  <textarea id="description" placeholder="상품 상세 설명"></textarea>
+  <input id="file" type="file">
+  <button onclick="submitProduct()">등록</button>
+  <button onclick="showMainScreen()">취소</button>
+</section>
+
+<!-- 세부 화면 -->
+<section id="detail-screen" style="display:none;">
+  <div id="detail-info"></div>
+  <h3>채팅</h3>
   <input id="message" placeholder="메시지">
-  <button onclick="sendMessage(productId.value, message.value)">전송</button>
-  <button onclick="showChat(productId.value)">채팅보기</button>
+  <button onclick="sendChatMessage()">전송</button>
+  <button onclick="showMainScreen()">목록으로</button>
   <div id="chat-list"></div>
 </section>
+
+<script type="module">
+import { addProduct } from './product.js';
+import { showProducts, showDetail } from './product-list.js';
+import { sendMessage, showChat } from './chat.js';
+import { login } from './auth.js';
+
+let currentProductId="";
+
+// 로그인 후 메인 화면 이동
+window.loginAndEnter = async function(email,password){
+  await login(email,password);
+  const user = firebase.auth().currentUser;
+  if(user && user.emailVerified){
+    showMainScreen();
+  }
+}
+
+// 화면 전환
+window.showMainScreen=function(){
+  document.getElementById("login-screen").style.display="none";
+  document.getElementById("register-screen").style.display="none";
+  document.getElementById("detail-screen").style.display="none";
+  document.getElementById("main-screen").style.display="block";
+  showProducts();
+}
+
+window.showRegisterScreen=function(){
+  document.getElementById("main-screen").style.display="none";
+  document.getElementById("register-screen").style.display="block";
+}
+
+// 상품 등록 후 메인 화면으로
+window.submitProduct=async function(){
+  const title=document.getElementById("title").value;
+  const price=document.getElementById("price").value;
+  const description=document.getElementById("description").value;
+  const file=document.getElementById("file").files[0];
+  if(!title || !price){ alert("상품명과 가격은 필수"); return; }
+  await addProduct(title,price,description,file);
+  showMainScreen();
+  showProducts();
+  document.getElementById("title").value="";
+  document.getElementById("price").value="";
+  document.getElementById("description").value="";
+  document.getElementById("file").value="";
+}
+
+// 세부 화면 전환
+window.showDetailScreen=async function(id){
+  currentProductId=id;
+  const data=await showDetail(id);
+  document.getElementById("detail-info").innerHTML=`
+    <h2>${data.title}</h2>
+    <p>가격: ${data.price}원</p>
+    <p>설명: ${data.description}</p>
+    ${data.imageUrl ? `<img src="${data.imageUrl}" style="width:150px">` : ""}
+    <p>판매자: ${data.sellerEmail}</p>
+    <p>등록일시: ${new Date(data.createdAt).toLocaleString()}</p>
+  `;
+  document.getElementById("main-screen").style.display="none";
+  document.getElementById("detail-screen").style.display="block";
+  showChat(currentProductId);
+}
+
+// 채팅 전송
+window.sendChatMessage=async function(){
+  const message=document.getElementById("message").value;
+  if(!message) return;
+  await sendMessage(currentProductId,message);
+  showChat(currentProductId);
+  document.getElementById("message").value="";
+}
+
+// 초기 화면은 로그인
+document.getElementById("login-screen").style.display="block";
+</script>
 
 </body>
 </html>
