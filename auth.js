@@ -1,4 +1,3 @@
-// auth.js
 import { auth } from './firebase-config.js';
 import { 
   createUserWithEmailAndPassword,
@@ -25,12 +24,11 @@ window.showMainScreen = function(){
   document.getElementById("login-screen").style.display = "none";
   document.getElementById("signup-screen").style.display = "none";
   document.getElementById("main-screen").style.display = "block";
-  window.showProducts(); // 상품 목록 불러오기
+  if(window.showProducts) window.showProducts();
 }
 
 // 회원가입
-const signupBtn = document.getElementById("signup-btn");
-signupBtn.addEventListener("click", async () => {
+document.getElementById("signup-btn").addEventListener("click", async () => {
   const email = document.getElementById("signup-email").value;
   const password = document.getElementById("signup-password").value;
   try {
@@ -44,8 +42,7 @@ signupBtn.addEventListener("click", async () => {
 });
 
 // 로그인
-const loginBtn = document.getElementById("login-btn");
-loginBtn.addEventListener("click", async () => {
+document.getElementById("login-btn").addEventListener("click", async () => {
   const email = document.getElementById("login-email").value;
   const password = document.getElementById("login-password").value;
   try {
@@ -72,8 +69,7 @@ onAuthStateChanged(auth, user => {
 });
 
 // 로그아웃
-const logoutBtn = document.getElementById("logout-btn");
-logoutBtn.addEventListener("click", async () => {
+document.getElementById("logout-btn").addEventListener("click", async () => {
   try {
     await signOut(auth);
     alert("로그아웃되었습니다.");
@@ -84,9 +80,7 @@ logoutBtn.addEventListener("click", async () => {
 });
 
 // 회원가입 화면 이동
-const showSignupBtn = document.getElementById("show-signup-btn");
-showSignupBtn.addEventListener("click", () => window.showSignupScreen());
+document.getElementById("show-signup-btn").addEventListener("click", () => window.showSignupScreen());
 
 // 로그인 화면 이동
-const backToLoginBtn = document.getElementById("back-to-login-btn");
-backToLoginBtn.addEventListener("click", () => window.showLoginScreen());
+document.getElementById("back-to-login-btn").addEventListener("click", () => window.showLoginScreen());
