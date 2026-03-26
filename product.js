@@ -3,6 +3,7 @@ import { db, storage, auth } from './firebase-config.js';
 import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-storage.js";
 
+// 상품 등록 함수
 window.addProduct = async function(title, price, description, file){
   let imageUrl = "";
 
