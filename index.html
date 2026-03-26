@@ -14,10 +14,10 @@
 
 <h1>Seed 마켓</h1>
 
-<!-- 로그인 화면 (처음 화면) -->
+<!-- 로그인 화면 -->
 <section id="login-screen">
   <h2>로그인</h2>
-  <input id="login-email" placeholder="학교 이메일">
+  <input id="login-email" placeholder="이메일">
   <input id="login-password" type="password" placeholder="비밀번호">
   <div>
     <button onclick="loginAndEnter()">로그인</button>
@@ -30,7 +30,7 @@
 <!-- 회원가입 화면 -->
 <section id="signup-screen" style="display:none;">
   <h2>회원가입</h2>
-  <input id="signup-email" placeholder="학교 이메일">
+  <input id="signup-email" placeholder="이메일">
   <input id="signup-password" type="password" placeholder="비밀번호">
   <div>
     <button onclick="signUpAndBack()">회원가입</button>
@@ -75,7 +75,7 @@ import { sendMessage, showChat } from './chat.js';
 
 let currentProductId="";
 
-// 로그인 화면 보이기
+// 화면 전환
 window.showLoginScreen = function(){
   document.getElementById("login-screen").style.display="block";
   document.getElementById("signup-screen").style.display="none";
@@ -84,13 +84,11 @@ window.showLoginScreen = function(){
   document.getElementById("detail-screen").style.display="none";
 }
 
-// 회원가입 화면 보이기
 window.showSignUpScreen = function(){
   document.getElementById("login-screen").style.display="none";
   document.getElementById("signup-screen").style.display="block";
 }
 
-// 회원가입 후 로그인 화면으로
 window.signUpAndBack = async function(){
   const email = document.getElementById("signup-email").value;
   const password = document.getElementById("signup-password").value;
@@ -99,7 +97,6 @@ window.signUpAndBack = async function(){
   showLoginScreen();
 }
 
-// 로그인 후 메인 화면
 window.loginAndEnter = async function(){
   const email = document.getElementById("login-email").value;
   const password = document.getElementById("login-password").value;
@@ -110,7 +107,6 @@ window.loginAndEnter = async function(){
   }
 }
 
-// 메인 화면
 window.showMainScreen = function(){
   document.getElementById("login-screen").style.display="none";
   document.getElementById("signup-screen").style.display="none";
@@ -120,13 +116,11 @@ window.showMainScreen = function(){
   showProducts();
 }
 
-// 등록 화면
 window.showRegisterScreen=function(){
   document.getElementById("main-screen").style.display="none";
   document.getElementById("register-screen").style.display="block";
 }
 
-// 상품 등록
 window.submitProduct=async function(){
   const title=document.getElementById("title").value;
   const price=document.getElementById("price").value;
@@ -142,7 +136,6 @@ window.submitProduct=async function(){
   document.getElementById("file").value="";
 }
 
-// 세부 화면
 window.showDetailScreen=async function(id){
   currentProductId=id;
   const data=await showDetail(id);
@@ -159,7 +152,6 @@ window.showDetailScreen=async function(id){
   showChat(currentProductId);
 }
 
-// 채팅 전송
 window.sendChatMessage=async function(){
   const message=document.getElementById("message").value;
   if(!message) return;
