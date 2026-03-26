@@ -1,180 +1,50 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>Seed 마켓</title>
-<link rel="stylesheet" href="style.css">
-<script type="module" src="firebase-config.js"></script>
-<script type="module" src="auth.js"></script>
-<script type="module" src="product.js"></script>
-<script type="module" src="product-list.js"></script>
-<script type="module" src="chat.js"></script>
+  <meta charset="UTF-8">
+  <title>Seed Market</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<h1>Seed 마켓</h1>
-
-<!-- 로그인 화면 -->
-<section id="login-screen">
-  <h2>로그인</h2>
-  <input id="login-email" placeholder="이메일">
-  <input id="login-password" type="password" placeholder="비밀번호">
-  <div>
-    <button onclick="login(
-      document.getElementById('login-email').value,
-      document.getElementById('login-password').value
-    )">로그인</button>
+  <!-- 로그인 화면 -->
+  <div id="login-screen">
+    <h2>로그인</h2>
+    <input id="login-email" placeholder="이메일">
+    <input id="login-password" type="password" placeholder="비밀번호">
+    <button id="login-btn">로그인</button>
+    <p>계정이 없나요? <button id="show-signup-btn">회원가입</button></p>
   </div>
-  <small style="display:block; margin-top:10px;">
-    계정이 없나요? <button onclick="showSignUpScreen()" style="font-size:0.8em;">회원가입</button>
-  </small>
-</section>
 
-<!-- 회원가입 화면 -->
-<section id="signup-screen" style="display:none;">
-  <h2>회원가입</h2>
-  <input id="signup-email" placeholder="이메일">
-  <input id="signup-password" type="password" placeholder="비밀번호">
-  <div>
-    <button onclick="signUpAndBack()">회원가입</button>
-    <button onclick="showLoginScreen()">취소</button>
+  <!-- 회원가입 화면 -->
+  <div id="signup-screen" style="display:none;">
+    <h2>회원가입</h2>
+    <input id="signup-email" placeholder="이메일">
+    <input id="signup-password" type="password" placeholder="비밀번호">
+    <button id="signup-btn">회원가입</button>
+    <button id="back-to-login-btn">로그인 화면으로</button>
   </div>
-</section>
 
-<!-- 메인 화면 -->
-<section id="main-screen" style="display:none;">
-  <button onclick="logout()">로그아웃</button>
-  <button onclick="showRegisterScreen()">상품 등록</button>
-  <h2>상품 목록</h2>
-  <div id="product-list"></div>
-  <button onclick="showProducts()">목록 새로고침</button>
-</section>
+  <!-- 메인 화면 -->
+  <div id="main-screen" style="display:none;">
+    <h2>Seed Market</h2>
+    <button id="logout-btn">로그아웃</button>
 
-<!-- 상품 등록 화면 -->
-<section id="register-screen" style="display:none;">
-  <h2>상품 등록</h2>
-  <input id="title" placeholder="상품명">
-  <input id="price" placeholder="가격">
-  <textarea id="description" placeholder="상품 상세 설명"></textarea>
-  <input id="file" type="file">
-  <button onclick="submitProduct()">등록</button>
-  <button onclick="showMainScreen()">취소</button>
-</section>
+    <!-- 상품 등록 -->
+    <h3>상품 등록</h3>
+    <input id="product-title" placeholder="상품명">
+    <input id="product-price" type="number" placeholder="가격">
+    <textarea id="product-desc" placeholder="상세 설명"></textarea>
+    <input id="product-file" type="file">
+    <button id="add-product-btn">등록</button>
 
-<!-- 상품 세부 화면 -->
-<section id="detail-screen" style="display:none;">
-  <div id="detail-info"></div>
-  <h3>채팅</h3>
-  <input id="message" placeholder="메시지">
-  <button onclick="sendChatMessage()">전송</button>
-  <button onclick="showMainScreen()">목록으로</button>
-  <div id="chat-list"></div>
-</section>
+    <!-- 상품 목록 -->
+    <h3>상품 목록</h3>
+    <div id="product-list"></div>
+  </div>
 
-<script type="module">
-import { showProducts, showDetail } from './product-list.js';
-import { addProduct } from './product.js';
-import { login, signUp, logout } from './auth.js';
-import { sendMessage, showChat } from './chat.js';
-
-let currentProductId="";
-
-// 화면 전환
-window.showLoginScreen = function(){
-  document.getElementById("login-screen").style.display="block";
-  document.getElementById("signup-screen").style.display="none";
-  document.getElementById("main-screen").style.display="none";
-  document.getElementById("register-screen").style.display="none";
-  document.getElementById("detail-screen").style.display="none";
-}
-
-window.showSignUpScreen = function(){
-  document.getElementById("login-screen").style.display="none";
-  document.getElementById("signup-screen").style.display="block";
-}
-
-window.signUpAndBack = async function(){
-  const email = document.getElementById("signup-email").value;
-  const password = document.getElementById("signup-password").value;
-  await signUp(email,password);
-  alert("이메일 인증 후 로그인 화면으로 돌아갑니다.");
-  showLoginScreen();
-}
-
-window.showMainScreen = function(){
-  document.getElementById("login-screen").style.display="none";
-  document.getElementById("signup-screen").style.display="none";
-  document.getElementById("main-screen").style.display="block";
-  document.getElementById("register-screen").style.display="none";
-  document.getElementById("detail-screen").style.display="none";
-  showProducts();
-}
-
-window.showRegisterScreen=function(){
-  document.getElementById("main-screen").style.display="none";
-  document.getElementById("register-screen").style.display="block";
-}
-
-// 상품 등록 함수 + 알림
-window.submitProduct = async function(){
-  const title = document.getElementById("title").value;
-  const price = document.getElementById("price").value;
-  const description = document.getElementById("description").value;
-  const file = document.getElementById("file").files[0];
-
-  if(!title || !price){
-    alert("상품명과 가격은 필수입니다.");
-    return;
-  }
-
-  try {
-    await addProduct(title, price, description, file);
-
-    // 등록 완료 알림
-    alert("상품이 성공적으로 등록되었습니다!");
-
-    // 화면 전환 및 목록 갱신
-    showMainScreen();
-    showProducts();
-
-    // 입력 초기화
-    document.getElementById("title").value = "";
-    document.getElementById("price").value = "";
-    document.getElementById("description").value = "";
-    document.getElementById("file").value = "";
-
-  } catch(e) {
-    alert("상품 등록 중 오류 발생: " + e.message);
-  }
-}
-
-window.showDetailScreen=async function(id){
-  currentProductId=id;
-  const data=await showDetail(id);
-  document.getElementById("detail-info").innerHTML=`
-    <h2>${data.title}</h2>
-    <p>가격: ${data.price}원</p>
-    <p>설명: ${data.description}</p>
-    ${data.imageUrl ? `<img src="${data.imageUrl}" style="width:150px">` : ""}
-    <p>판매자: ${data.sellerEmail}</p>
-    <p>등록일시: ${new Date(data.createdAt).toLocaleString()}</p>
-  `;
-  document.getElementById("main-screen").style.display="none";
-  document.getElementById("detail-screen").style.display="block";
-  showChat(currentProductId);
-}
-
-window.sendChatMessage=async function(){
-  const message=document.getElementById("message").value;
-  if(!message) return;
-  await sendMessage(currentProductId,message);
-  showChat(currentProductId);
-  document.getElementById("message").value="";
-}
-
-// 초기 화면: 로그인
-showLoginScreen();
-</script>
-
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="auth.js"></script>
+  <script type="module" src="product.js"></script>
+  <script type="module" src="product-list.js"></script>
 </body>
 </html>
