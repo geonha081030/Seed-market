@@ -2,7 +2,7 @@
 import { db, auth } from './firebase-config.js';
 import { collection, addDoc, query, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-export async function sendMessage(productId, message){
+window.sendMessage = async function(productId, message){
   if(!auth.currentUser) return;
   await addDoc(collection(db, "products", productId, "chats"), {
     message,
@@ -11,7 +11,7 @@ export async function sendMessage(productId, message){
   });
 }
 
-export function showChat(productId){
+window.showChat = function(productId){
   const chatContainer = document.getElementById("chat-list");
   chatContainer.innerHTML = "";
   const q = query(collection(db, "products", productId, "chats"), orderBy("timestamp"));
