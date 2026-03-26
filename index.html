@@ -14,14 +14,27 @@
 
 <h1>Seed 마켓</h1>
 
-<!-- 로그인 화면 -->
+<!-- 로그인 화면 (처음 화면) -->
 <section id="login-screen">
-  <h2>로그인 / 회원가입</h2>
-  <input id="email" placeholder="학교 이메일">
-  <input id="password" type="password" placeholder="비밀번호">
+  <h2>로그인</h2>
+  <input id="login-email" placeholder="학교 이메일">
+  <input id="login-password" type="password" placeholder="비밀번호">
   <div>
-    <button onclick="signUp(email.value,password.value)">회원가입</button>
-    <button onclick="loginAndEnter(email.value,password.value)">로그인</button>
+    <button onclick="loginAndEnter()">로그인</button>
+  </div>
+  <small style="display:block; margin-top:10px;">
+    계정이 없나요? <button onclick="showSignUpScreen()" style="font-size:0.8em;">회원가입</button>
+  </small>
+</section>
+
+<!-- 회원가입 화면 -->
+<section id="signup-screen" style="display:none;">
+  <h2>회원가입</h2>
+  <input id="signup-email" placeholder="학교 이메일">
+  <input id="signup-password" type="password" placeholder="비밀번호">
+  <div>
+    <button onclick="signUpAndBack()">회원가입</button>
+    <button onclick="showLoginScreen()">취소</button>
   </div>
 </section>
 
@@ -33,7 +46,7 @@
   <button onclick="showProducts()">목록 새로고침</button>
 </section>
 
-<!-- 등록 화면 -->
+<!-- 상품 등록 화면 -->
 <section id="register-screen" style="display:none;">
   <h2>상품 등록</h2>
   <input id="title" placeholder="상품명">
@@ -44,7 +57,7 @@
   <button onclick="showMainScreen()">취소</button>
 </section>
 
-<!-- 세부 화면 -->
+<!-- 상품 세부 화면 -->
 <section id="detail-screen" style="display:none;">
   <div id="detail-info"></div>
   <h3>채팅</h3>
@@ -55,31 +68,59 @@
 </section>
 
 <script type="module">
+import { login, signUp } from './auth.js';
 import { addProduct } from './product.js';
 import { showProducts, showDetail } from './product-list.js';
 import { sendMessage, showChat } from './chat.js';
-import { login } from './auth.js';
 
 let currentProductId="";
 
+// 로그인 화면 보이기
+window.showLoginScreen = function(){
+  document.getElementById("login-screen").style.display="block";
+  document.getElementById("signup-screen").style.display="none";
+  document.getElementById("main-screen").style.display="none";
+  document.getElementById("register-screen").style.display="none";
+  document.getElementById("detail-screen").style.display="none";
+}
+
+// 회원가입 화면 보이기
+window.showSignUpScreen = function(){
+  document.getElementById("login-screen").style.display="none";
+  document.getElementById("signup-screen").style.display="block";
+}
+
+// 회원가입 후 로그인 화면으로
+window.signUpAndBack = async function(){
+  const email = document.getElementById("signup-email").value;
+  const password = document.getElementById("signup-password").value;
+  await signUp(email,password);
+  alert("이메일 인증 후 로그인 화면으로 돌아갑니다.");
+  showLoginScreen();
+}
+
 // 로그인 후 메인 화면
-window.loginAndEnter=async function(email,password){
+window.loginAndEnter = async function(){
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-password").value;
   await login(email,password);
-  const user=firebase.auth().currentUser;
+  const user = firebase.auth().currentUser;
   if(user && user.emailVerified){
     showMainScreen();
   }
 }
 
-// 화면 전환
-window.showMainScreen=function(){
+// 메인 화면
+window.showMainScreen = function(){
   document.getElementById("login-screen").style.display="none";
+  document.getElementById("signup-screen").style.display="none";
+  document.getElementById("main-screen").style.display="block";
   document.getElementById("register-screen").style.display="none";
   document.getElementById("detail-screen").style.display="none";
-  document.getElementById("main-screen").style.display="block";
   showProducts();
 }
 
+// 등록 화면
 window.showRegisterScreen=function(){
   document.getElementById("main-screen").style.display="none";
   document.getElementById("register-screen").style.display="block";
@@ -118,7 +159,7 @@ window.showDetailScreen=async function(id){
   showChat(currentProductId);
 }
 
-// 채팅
+// 채팅 전송
 window.sendChatMessage=async function(){
   const message=document.getElementById("message").value;
   if(!message) return;
@@ -128,7 +169,7 @@ window.sendChatMessage=async function(){
 }
 
 // 초기 화면: 로그인
-document.getElementById("login-screen").style.display="block";
+showLoginScreen();
 </script>
 
 </body>
