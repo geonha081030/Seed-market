@@ -2,25 +2,61 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>School Market</title>
 <link rel="stylesheet" href="style.css">
+<script type="module" src="script.js"></script>
 </head>
 <body>
+
+<!-- -------------------- 인증 화면 -------------------- -->
 <div id="auth">
-  <h2>로그인</h2>
-  <input id="email" type="email" placeholder="이메일"><br>
-  <input id="password" type="password" placeholder="비밀번호"><br>
-  <button onclick="login()">로그인</button>
+  <h2>회원가입 / 로그인</h2>
+  <input type="email" id="email" placeholder="이메일">
+  <input type="password" id="password" placeholder="비밀번호">
   <button onclick="signUp()">회원가입</button>
+  <button onclick="login()">로그인</button>
 </div>
 
-<div id="menu" style="display:none;">
-  <h2>메뉴</h2>
-  <button onclick="location.href='add.html'">상품 등록</button>
-  <button onclick="location.href='list.html'">상품 목록</button>
+<!-- -------------------- 메인 앱 화면 -------------------- -->
+<div id="app" style="display:none;">
+
+  <h2>School Market</h2>
   <button onclick="logout()">로그아웃</button>
+
+  <!-- -------------------- 화면 선택 -------------------- -->
+  <div style="margin:12px 0;">
+    <button onclick="showSection('registerSection')">상품 등록</button>
+    <button onclick="showSection('listSection')">상품 목록</button>
+  </div>
+
+  <!-- -------------------- 상품 등록 -------------------- -->
+  <div id="registerSection" style="display:none;">
+    <h3>상품 등록</h3>
+    <input type="text" id="title" placeholder="상품명">
+    <input type="number" id="price" placeholder="가격">
+    <input type="file" id="image">
+    <button onclick="addItemWithImage()">등록</button>
+  </div>
+
+  <!-- -------------------- 상품 목록 & 검색 -------------------- -->
+  <div id="listSection" style="display:none;">
+    <h3>상품 목록</h3>
+    <input type="text" id="searchInput" placeholder="검색">
+    <button onclick="searchItems()">검색</button>
+    <div id="items" style="margin-top:12px;"></div>
+  </div>
+
 </div>
 
-<script type="module" src="script.js"></script>
+<script>
+  // -------------------- 화면 전환 --------------------
+  function showSection(id) {
+    document.getElementById('registerSection').style.display = 'none';
+    document.getElementById('listSection').style.display = 'none';
+    document.getElementById(id).style.display = 'block';
+  }
+</script>
+
 </body>
 </html>
