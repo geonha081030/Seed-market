@@ -1,4 +1,25 @@
-body { font-family: Arial, sans-serif; margin:20px; }
-#chat { border:1px solid #ccc; height:400px; overflow-y:auto; padding:10px; margin-bottom:10px; }
-input, button { padding:10px; margin:5px 0; font-size:16px; }
-button { cursor:pointer; min-width:100px; }
+// product.js
+import { db, storage, collection, addDoc, ref, uploadBytes, getDownloadURL, auth } from './firebase-config.js';
+
+export async function addProduct(title, price, description, file) {
+  try {
+    let imageUrl = "";
+    if(file) {
+      const storageRef = ref(storage, `seed-products/${Date.now()}_${file.name}`);
+      await uploadBytes(storageRef, file);
+      imageUrl = await getDownloadURL(storageRef);
+    }
+
+    await addDoc(collection(db, "seed-products"), {
+      title,
+      price,
+      description,
+      imageUrl,
+      sellerEmail: auth.currentUser.email,
+      tradeMethod: "직거래",
+      createdAt: new Date()
+    });
+
+    alert("Seed 상품 등록 완료!");
+  } catch(e) { alert("상품 등록 실패: " + e.message); }
+}
