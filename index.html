@@ -19,10 +19,10 @@
   <!-- 회원가입 -->
   <div id="signup-screen" style="display:none;">
     <h2>회원가입</h2>
-    <input id="signup-email">
-    <input id="signup-password" type="password">
-    <button id="signup-btn">가입</button>
-    <button id="back-to-login-btn">뒤로</button>
+    <input id="signup-email" placeholder="이메일">
+    <input id="signup-password" type="password" placeholder="비밀번호">
+    <button id="signup-btn">회원가입</button>
+    <button id="back-to-login-btn">로그인 화면으로</button>
   </div>
 
   <!-- 메인 -->
@@ -32,14 +32,19 @@
     <button id="go-add-btn">상품 등록</button>
     <button id="go-list-btn">상품 목록</button>
 
-    <!-- 🔥 마이페이지 -->
-    <div id="my-page">
-      <h3>마이페이지</h3>
-      <p id="my-email"></p>
+    <!-- 🔥 마이페이지 버튼 -->
+    <button id="go-mypage-btn">마이페이지</button>
+  </div>
 
-      <h4>내 상품</h4>
-      <div id="my-products"></div>
-    </div>
+  <!-- 🔥 마이페이지 화면 -->
+  <div id="mypage-screen" style="display:none;">
+    <h3>마이페이지</h3>
+    <p id="my-email"></p>
+
+    <h4>내 상품</h4>
+    <div id="my-products"></div>
+
+    <button id="back-main-from-mypage-btn">메인으로</button>
   </div>
 
   <!-- 상품 등록 -->
@@ -47,23 +52,24 @@
     <h3>상품 등록</h3>
     <input id="product-title" placeholder="상품명">
     <input id="product-price" type="number" placeholder="가격">
-    <textarea id="product-desc"></textarea>
+    <textarea id="product-desc" placeholder="상세 설명"></textarea>
     <button id="add-product-btn">등록</button>
-    <button id="back-main-btn">메인</button>
+    <button id="back-main-btn">메인 화면으로</button>
   </div>
 
   <!-- 상품 목록 -->
   <div id="product-list-screen" style="display:none;">
     <h3>상품 목록</h3>
-    <input id="product-search" placeholder="검색">
+    <input id="product-search" placeholder="상품명 검색">
     <div id="product-list"></div>
-    <button id="back-main-from-list-btn">메인</button>
+    <button id="back-main-from-list-btn">메인 화면으로</button>
   </div>
 
   <script type="module" src="firebase-config.js"></script>
   <script type="module" src="auth.js"></script>
   <script type="module" src="product.js"></script>
   <script type="module" src="product-list.js"></script>
+  <script type="module" src="product-detail.js"></script>
   <script type="module" src="mypage.js"></script>
 
 </body>
