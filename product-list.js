@@ -6,19 +6,26 @@ window.showProducts = async () => {
   const listDiv = document.getElementById("product-list");
   listDiv.innerHTML = "";
 
+  const search = document.getElementById("product-search").value.toLowerCase();
+
   const snapshot = await getDocs(collection(db, "products"));
 
   snapshot.forEach(docSnap => {
     const product = docSnap.data();
 
+    if (search && !product.title.toLowerCase().includes(search)) return;
+
     const div = document.createElement("div");
-    div.style.border = "1px solid #ccc";
-    div.style.padding = "10px";
-    div.style.margin = "10px";
+    div.classList.add("product-item");
+
+    if (product.sold) {
+      div.style.opacity = "0.5";
+    }
 
     div.innerHTML = `
       <h4>${product.title}</h4>
       <p>${product.price}원</p>
+      ${product.sold ? "<p>판매 완료</p>" : ""}
     `;
 
     const btn = document.createElement("button");
@@ -28,17 +35,20 @@ window.showProducts = async () => {
     };
 
     div.appendChild(btn);
-
     listDiv.appendChild(div);
   });
 };
 
-// 목록 버튼 연결
+// 검색
+document.getElementById("product-search").addEventListener("input", () => {
+  window.showProducts();
+});
+
+// 화면 이동
 document.getElementById("go-list-btn").addEventListener("click", () => {
   window.showProductListScreen();
 });
 
-// 뒤로가기
 document.getElementById("back-main-from-list-btn").addEventListener("click", () => {
   window.showMainScreen();
 });
