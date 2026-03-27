@@ -4,111 +4,67 @@
   <meta charset="UTF-8">
   <title>Seed Market</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    /* 입력칸 크게 */
-    .large-input, .large-textarea {
-      width: 400px;
-      padding: 12px;
-      font-size: 18px;
-      margin: 5px 0;
-    }
-
-    .large-textarea {
-      height: 100px;
-    }
-
-    /* 버튼 크게 */
-    .large-btn {
-      padding: 12px 30px;
-      font-size: 18px;
-      cursor: pointer;
-      margin: 5px 0;
-    }
-
-    /* 상품 카드 스타일 */
-    .product-card {
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      padding: 10px;
-      margin-bottom: 10px;
-      background-color: #f9f9f9;
-    }
-
-    .product-card.sold {
-      background-color: #f0f0f0;
-      opacity: 0.7;
-    }
-
-    hr {
-      border: 0;
-      border-top: 1px solid #ccc;
-      margin: 10px 0;
-    }
-  </style>
 </head>
 <body>
-  <!-- 로그인 화면 -->
+
+  <!-- 로그인 -->
   <div id="login-screen">
     <h2>로그인</h2>
-    <input class="large-input" id="login-email" placeholder="이메일">
-    <input class="large-input" id="login-password" type="password" placeholder="비밀번호">
-    <button class="large-btn" id="login-btn">로그인</button>
-    <p>계정이 없나요? <button class="large-btn" id="show-signup-btn">회원가입</button></p>
+    <input id="login-email" placeholder="이메일">
+    <input id="login-password" type="password" placeholder="비밀번호">
+    <button id="login-btn">로그인</button>
+    <button id="show-signup-btn">회원가입</button>
   </div>
 
-  <!-- 회원가입 화면 -->
+  <!-- 회원가입 -->
   <div id="signup-screen" style="display:none;">
     <h2>회원가입</h2>
-    <input class="large-input" id="signup-email" placeholder="이메일">
-    <input class="large-input" id="signup-password" type="password" placeholder="비밀번호">
-    <button class="large-btn" id="signup-btn">회원가입</button>
-    <button class="large-btn" id="back-to-login-btn">로그인 화면으로</button>
+    <input id="signup-email">
+    <input id="signup-password" type="password">
+    <button id="signup-btn">가입</button>
+    <button id="back-to-login-btn">뒤로</button>
   </div>
 
-  <!-- 메인 화면 -->
+  <!-- 메인 -->
   <div id="main-screen" style="display:none;">
     <h2>Seed Market</h2>
-    <button class="large-btn" id="logout-btn">로그아웃</button>
-    <button class="large-btn" id="go-add-btn">상품 등록</button>
-    <button class="large-btn" id="go-list-btn">상품 목록</button>
+    <button id="logout-btn">로그아웃</button>
+    <button id="go-add-btn">상품 등록</button>
+    <button id="go-list-btn">상품 목록</button>
+
+    <!-- 🔥 마이페이지 -->
+    <div id="my-page">
+      <h3>마이페이지</h3>
+      <p id="my-email"></p>
+
+      <h4>내 상품</h4>
+      <div id="my-products"></div>
+    </div>
   </div>
 
-  <!-- 상품 등록 화면 -->
+  <!-- 상품 등록 -->
   <div id="product-add-screen" style="display:none;">
     <h3>상품 등록</h3>
-    <input class="large-input" id="product-title" placeholder="상품명">
-    <input class="large-input" type="number" id="product-price" placeholder="가격">
-    <textarea class="large-textarea" id="product-desc" placeholder="상세 설명"></textarea>
-    <button class="large-btn" id="add-product-btn">등록</button>
-    <button class="large-btn" id="back-main-btn">메인 화면으로</button>
+    <input id="product-title" placeholder="상품명">
+    <input id="product-price" type="number" placeholder="가격">
+    <textarea id="product-desc"></textarea>
+    <button id="add-product-btn">등록</button>
+    <button id="back-main-btn">메인</button>
   </div>
 
-  <!-- 상품 목록 화면 -->
+  <!-- 상품 목록 -->
   <div id="product-list-screen" style="display:none;">
     <h3>상품 목록</h3>
-    <input class="large-input" id="product-search" placeholder="상품명 검색">
+    <input id="product-search" placeholder="검색">
     <div id="product-list"></div>
-    <button class="large-btn" id="back-main-from-list-btn">메인 화면으로</button>
+    <button id="back-main-from-list-btn">메인</button>
   </div>
 
-  <!-- 상품 상세 화면 -->
-  <div id="product-detail-screen" style="display:none;">
-    <h3 id="detail-title"></h3>
-    <p id="detail-price"></p>
-    <p id="detail-desc"></p>
-    <p id="detail-sold" style="color:red; font-weight:bold;"></p>
-    <button class="large-btn" id="detail-sold-btn">판매 완료</button>
-    <div id="chat-list" style="border:1px solid #ccc; padding:10px; height:200px; overflow-y:auto; margin-top:10px;"></div>
-    <input class="large-input" id="chat-input" placeholder="메시지 입력">
-    <button class="large-btn" id="chat-send-btn">전송</button>
-    <button class="large-btn" id="back-main-from-detail-btn">메인 화면으로</button>
-  </div>
-
-  <!-- 스크립트 -->
   <script type="module" src="firebase-config.js"></script>
   <script type="module" src="auth.js"></script>
   <script type="module" src="product.js"></script>
   <script type="module" src="product-list.js"></script>
-  <script type="module" src="product-detail.js"></script>
+  <script type="module" src="mypage.js"></script>
+
 </body>
 </html>
