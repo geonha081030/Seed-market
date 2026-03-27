@@ -1,3 +1,4 @@
+// auth.js
 import { auth } from './firebase-config.js';
 import { 
   createUserWithEmailAndPassword,
@@ -7,30 +8,36 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
-// 화면 전환 함수
+// 화면 전환
 window.showLoginScreen = function() {
   document.getElementById("login-screen").style.display = "block";
   document.getElementById("signup-screen").style.display = "none";
   document.getElementById("main-screen").style.display = "none";
   document.getElementById("product-add-screen").style.display = "none";
   document.getElementById("product-list-screen").style.display = "none";
-};
+}
 
 window.showSignupScreen = function() {
   document.getElementById("login-screen").style.display = "none";
   document.getElementById("signup-screen").style.display = "block";
-  document.getElementById("main-screen").style.display = "none";
-  document.getElementById("product-add-screen").style.display = "none";
-  document.getElementById("product-list-screen").style.display = "none";
-};
+}
 
 window.showMainScreen = function() {
   document.getElementById("main-screen").style.display = "block";
   document.getElementById("login-screen").style.display = "none";
   document.getElementById("signup-screen").style.display = "none";
-  document.getElementById("product-add-screen").style.display = "none";
-  document.getElementById("product-list-screen").style.display = "none";
-};
+}
+
+window.showAddProductScreen = function() {
+  document.getElementById("main-screen").style.display = "none";
+  document.getElementById("product-add-screen").style.display = "block";
+}
+
+window.showProductListScreen = function() {
+  document.getElementById("main-screen").style.display = "none";
+  document.getElementById("product-list-screen").style.display = "block";
+  if(window.showProducts) window.showProducts();
+}
 
 // 회원가입
 document.getElementById("signup-btn").addEventListener("click", async () => {
