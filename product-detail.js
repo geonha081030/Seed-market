@@ -8,13 +8,8 @@ window.showProductDetailScreen = async (productId) => {
   document.getElementById("product-list-screen").style.display = "none";
   document.getElementById("product-detail-screen").style.display = "block";
 
-  const productRef = doc(db, "products", productId);
-  const snap = await getDoc(productRef);
-
-  if (!snap.exists()) {
-    alert("상품 없음");
-    return;
-  }
+  const ref = doc(db, "products", productId);
+  const snap = await getDoc(ref);
 
   const product = snap.data();
 
@@ -23,7 +18,6 @@ window.showProductDetailScreen = async (productId) => {
   document.getElementById("detail-desc").textContent = product.description || "";
 };
 
-// 뒤로가기
 document.getElementById("back-main-from-detail-btn").addEventListener("click", () => {
   document.getElementById("product-detail-screen").style.display = "none";
   window.showMainScreen();
