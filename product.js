@@ -15,7 +15,9 @@ document.getElementById("add-product-btn").addEventListener("click", async () =>
 
   try {
     let imageUrl = "";
+
     if (file) {
+      // Storage 업로드 시 권한과 파일 유효성 확인
       const storageRef = ref(storage, `products/${Date.now()}_${file.name}`);
       const snapshot = await uploadBytes(storageRef, file);
       imageUrl = await getDownloadURL(snapshot.ref);
@@ -30,9 +32,10 @@ document.getElementById("add-product-btn").addEventListener("click", async () =>
     });
 
     alert("상품 등록 완료!");
+    // 상품 목록 화면으로 이동만 하고, 목록 표시 함수는 여기서 호출하지 않음
     window.showProductListScreen();
   } catch (e) {
-    console.error(e);
+    console.error("상품 등록 실패:", e);
     alert("상품 등록 실패: " + e.message);
   }
 });
