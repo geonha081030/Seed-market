@@ -41,7 +41,7 @@
     <button id="back-main-from-list-btn">메인으로</button>
   </div>
 
-  <!-- 🔥 상품 상세 + 채팅 -->
+  <!-- 상품 상세 -->
   <div id="product-detail-screen" style="display:none;">
     <h3 id="detail-title"></h3>
     <p id="detail-price"></p>
@@ -51,7 +51,6 @@
     <div id="chat-list" style="height:200px; overflow:auto; border:1px solid #ccc;"></div>
 
     <input id="chat-input" placeholder="메시지 입력">
-    <!-- 🔥 직접 연결 -->
     <button onclick="sendMessage()">전송</button>
 
     <button id="back-main-from-detail-btn">메인으로</button>
@@ -62,14 +61,6 @@
   <script type="module" src="auth.js"></script>
   <script type="module" src="product-list.js"></script>
   <script type="module" src="product-detail.js"></script>
-
-  <!-- 🔥 자동 실행 -->
-  <script>
-    window.addEventListener("load", () => {
-      if (window.showProductListScreen) window.showProductListScreen();
-      if (window.showProducts) window.showProducts();
-    });
-  </script>
 
 </body>
 </html>
