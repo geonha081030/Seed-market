@@ -1,66 +1,119 @@
-/* 전체 */
+/* 전체 기본 */
 body {
   font-family: Arial, sans-serif;
-  background-color: #fff7f8;
-  padding: 20px;
+  background-color: #fefefe;
+  margin: 0;
+  padding: 0;
+  text-align: center;
 }
 
 /* 화면 박스 */
-#login-screen, #signup-screen, #main-screen, 
-#product-add-screen, #product-list-screen {
-  max-width: 700px;
-  margin: auto;
-  padding: 20px;
-  background: white;
-  border-radius: 15px;
+div {
+  margin-top: 40px;
 }
 
-/* 입력 */
+/* 제목 */
+h2, h3 {
+  color: #555;
+}
+
+/* 입력칸 */
 input, textarea {
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  border-radius: 10px;
-  border: 1px solid #ccc;
+  display: block;
+  margin: 12px auto;
+  padding: 14px;
+  width: 320px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  background-color: #fffdfd;
 }
 
-/* 버튼 */
+/* 버튼 기본 */
 button {
-  padding: 12px 20px;
-  border-radius: 10px;
+  display: block;
+  margin: 10px auto;
+  padding: 14px;
+  width: 320px;
+  border-radius: 12px;
   border: none;
-  margin: 5px 0;
+  font-size: 16px;
   cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
 }
 
-/* 🔥 판매 완료 버튼 */
-.sold-btn {
-  background-color: #d81b60 !important;
-  color: white !important;
+/* 버튼 색상 (파스텔톤) */
+button:nth-of-type(1) {
+  background-color: #ffd6e0; /* 핑크 */
+}
+
+button:nth-of-type(2) {
+  background-color: #d6f5ff; /* 하늘 */
+}
+
+button:nth-of-type(3) {
+  background-color: #e7ffd6; /* 연두 */
+}
+
+button:nth-of-type(4) {
+  background-color: #fff5cc; /* 노랑 */
+}
+
+/* 버튼 hover */
+button:hover {
+  opacity: 0.85;
+  transform: scale(1.02);
 }
 
 /* 상품 카드 */
-.product-card {
-  background: #e1f5fe;
+.product-item {
+  width: 340px;
+  margin: 15px auto;
   padding: 15px;
-  border-radius: 15px;
-  margin-bottom: 15px;
+  border-radius: 16px;
+  background-color: #f9f9ff;
+  border: 1px solid #eee;
+  text-align: left;
 }
 
-/* 🔥 판매 완료 상품 (덜 눈에 띄게) */
-.product-card.sold {
-  background: #eeeeee;
+/* 판매 완료 상품 (덜 눈에 띄게) */
+.product-item.sold {
+  background-color: #f3f3f3;
   opacity: 0.6;
 }
 
-/* 텍스트 흐리게 */
-.product-card.sold h4,
-.product-card.sold p {
-  color: #888;
+/* 상품 제목 */
+.product-item h4 {
+  margin: 0 0 8px 0;
+  color: #444;
 }
 
-/* 판매 완료 글자만 살짝 강조 */
+/* 가격 */
+.product-item p {
+  margin: 4px 0;
+}
+
+/* 판매완료 텍스트 */
 .sold-text {
-  color: #ff7043;
-  font-weight: bold;
+  color: #888;
+  font-size: 14px;
+}
+
+/* 상세페이지 */
+#product-detail-screen {
+  width: 350px;
+  margin: 0 auto;
+}
+
+/* 마이페이지 상품 */
+#mypage-screen .product-item {
+  background-color: #fff7fb;
+}
+
+/* 스크롤 영역 (나중 채팅 대비) */
+#chat-list {
+  border-radius: 10px;
+  padding: 10px;
+  background-color: #fafafa;
 }
