@@ -31,15 +31,20 @@
     <button id="logout-btn">로그아웃</button>
     <button id="go-add-btn">상품 등록</button>
     <button id="go-list-btn">상품 목록</button>
-
-    <!-- 🔥 마이페이지 버튼 -->
     <button id="go-mypage-btn">마이페이지</button>
   </div>
 
-  <!-- 🔥 마이페이지 화면 -->
+  <!-- 🔥 마이페이지 -->
   <div id="mypage-screen" style="display:none;">
     <h3>마이페이지</h3>
     <p id="my-email"></p>
+
+    <!-- 필터 -->
+    <div>
+      <button onclick="setFilter('all')">전체</button>
+      <button onclick="setFilter('selling')">판매중</button>
+      <button onclick="setFilter('sold')">판매완료</button>
+    </div>
 
     <h4>내 상품</h4>
     <div id="my-products"></div>
