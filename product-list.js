@@ -1,7 +1,6 @@
 import { db, auth } from './firebase-config.js';
 import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-// 상품 목록 화면 표시
 window.showProducts = async () => {
   const listDiv = document.getElementById("product-list");
   listDiv.innerHTML = "";
@@ -20,11 +19,17 @@ window.showProducts = async () => {
     const productDiv = document.createElement("div");
     productDiv.classList.add("product-card");
 
+    // 판매 완료 시 스타일 변경
+    if(product.sold){
+      productDiv.style.backgroundColor = "#f0f0f0";  // 회색 배경
+      productDiv.style.opacity = "0.7";              // 약간 투명
+    }
+
     productDiv.innerHTML = `
       <h4>${product.title}</h4>
       <p>가격: ${product.price}원</p>
       <p>${product.description || ""}</p>
-      <p>${product.sold ? "판매 완료" : ""}</p>
+      ${product.sold ? `<p style="color:red; font-weight:bold;">판매 완료</p>` : ""}
       ${product.sellerEmail === auth.currentUser.email && !product.sold ? `<button onclick="markAsSold('${docSnap.id}')">판매 완료</button>` : ""}
       <hr>
     `;
