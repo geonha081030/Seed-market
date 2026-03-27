@@ -20,7 +20,7 @@ window.showProducts = async () => {
     const productDiv = document.createElement("div");
     productDiv.classList.add("product-card");
 
-    // 🔥 판매 완료면 스타일 적용
+    // 🔥 판매 완료면 흐리게 처리
     if (product.sold) {
       productDiv.classList.add("sold");
     }
@@ -31,7 +31,7 @@ window.showProducts = async () => {
       <p>${product.description || ""}</p>
       <p>등록일: ${product.createdAt ? product.createdAt.toDate().toLocaleString() : ""}</p>
 
-      ${product.sold ? `<p style="font-weight:bold;">판매 완료</p>` : ""}
+      ${product.sold ? `<p class="sold-text">판매 완료</p>` : ""}
 
       ${
         product.sellerEmail === auth.currentUser.email && !product.sold 
@@ -61,7 +61,6 @@ window.markAsSold = async (productId) => {
 
     alert("판매 완료 처리되었습니다.");
 
-    // 목록 다시 불러오기
     if (window.showProducts) window.showProducts();
 
   } catch (e) {
