@@ -7,41 +7,38 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
-// 화면 전환 함수
-window.showLoginScreen = function(){
+// 화면 전환
+window.showLoginScreen = () => {
   document.getElementById("login-screen").style.display = "block";
   document.getElementById("signup-screen").style.display = "none";
   document.getElementById("main-screen").style.display = "none";
   document.getElementById("product-add-screen").style.display = "none";
   document.getElementById("product-list-screen").style.display = "none";
-}
+};
 
-window.showSignupScreen = function(){
+window.showSignupScreen = () => {
   document.getElementById("login-screen").style.display = "none";
   document.getElementById("signup-screen").style.display = "block";
-  document.getElementById("main-screen").style.display = "none";
-  document.getElementById("product-add-screen").style.display = "none";
-  document.getElementById("product-list-screen").style.display = "none";
-}
+};
 
-window.showMainScreen = function(){
+window.showMainScreen = () => {
   document.getElementById("main-screen").style.display = "block";
   document.getElementById("login-screen").style.display = "none";
   document.getElementById("signup-screen").style.display = "none";
   document.getElementById("product-add-screen").style.display = "none";
   document.getElementById("product-list-screen").style.display = "none";
-}
+};
 
-window.showAddProductScreen = function(){
+window.showAddProductScreen = () => {
   document.getElementById("main-screen").style.display = "none";
   document.getElementById("product-add-screen").style.display = "block";
-}
+};
 
-window.showProductListScreen = function(){
+window.showProductListScreen = () => {
   document.getElementById("main-screen").style.display = "none";
   document.getElementById("product-list-screen").style.display = "block";
-  if(window.showProducts) window.showProducts();
-}
+  if (window.showProducts) window.showProducts();
+};
 
 // 회원가입
 document.getElementById("signup-btn").addEventListener("click", async () => {
@@ -63,7 +60,7 @@ document.getElementById("login-btn").addEventListener("click", async () => {
   const password = document.getElementById("login-password").value;
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    if(!userCredential.user.emailVerified){
+    if (!userCredential.user.emailVerified) {
       alert("이메일 인증이 완료되지 않았습니다.");
       await signOut(auth);
       return;
@@ -77,11 +74,8 @@ document.getElementById("login-btn").addEventListener("click", async () => {
 
 // 자동 로그인 감시
 onAuthStateChanged(auth, user => {
-  if(user && user.emailVerified){
-    window.showMainScreen();
-  } else {
-    window.showLoginScreen();
-  }
+  if (user && user.emailVerified) window.showMainScreen();
+  else window.showLoginScreen();
 });
 
 // 로그아웃
