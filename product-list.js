@@ -18,31 +18,43 @@ window.showProducts = async () => {
 
     const productDiv = document.createElement("div");
     productDiv.className = "product-card";
-    productDiv.style.cursor = "pointer";
 
     if (product.sold) productDiv.classList.add("sold");
+
+    // 🔥 등록일 변환
+    let dateText = "";
+    if (product.createdAt && product.createdAt.toDate) {
+      const date = product.createdAt.toDate();
+      dateText = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`;
+    }
 
     productDiv.innerHTML = `
       <h4>${product.title}</h4>
       <p>${product.price}원</p>
+      <p>${product.description || ""}</p>
+      <p style="font-size:12px; color:gray;">등록일: ${dateText}</p>
       ${product.sold ? `<p class="sold-text">판매 완료</p>` : ""}
     `;
 
-    // 🔥 무조건 작동 확인용 로그
-    productDiv.onclick = () => {
-      console.log("클릭됨:", docSnap.id);
+    // 🔥 상세보기 버튼 (핵심)
+    const detailBtn = document.createElement("button");
+    detailBtn.textContent = "상세보기";
+    detailBtn.style.backgroundColor = "#2196F3";
+    detailBtn.style.color = "white";
+
+    detailBtn.onclick = () => {
       window.showProductDetailScreen(docSnap.id);
     };
 
-    // 판매완료 버튼 (내 상품)
+    productDiv.appendChild(detailBtn);
+
+    // 🔥 판매완료 버튼 (내 상품)
     if (product.sellerEmail === auth.currentUser.email && !product.sold) {
-      const btn = document.createElement("button");
-      btn.textContent = "판매 완료";
-      btn.className = "sold-btn";
+      const soldBtn = document.createElement("button");
+      soldBtn.textContent = "판매 완료";
+      soldBtn.className = "sold-btn";
 
-      btn.onclick = async (e) => {
-        e.stopPropagation(); // 🔥 카드 클릭 막힘 방지
-
+      soldBtn.onclick = async () => {
         const { doc, updateDoc } = await import(
           "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js"
         );
@@ -53,8 +65,11 @@ window.showProducts = async () => {
         window.showProducts();
       };
 
-      productDiv.appendChild(btn);
+      productDiv.appendChild(soldBtn);
     }
+
+    const hr = document.createElement("hr");
+    productDiv.appendChild(hr);
 
     listDiv.appendChild(productDiv);
   });
