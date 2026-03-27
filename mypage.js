@@ -2,7 +2,15 @@ import { db, auth } from './firebase-config.js';
 import { collection, getDocs } 
 from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-// 마이페이지 불러오기
+let currentFilter = "all";
+
+// 필터 변경
+window.setFilter = (type) => {
+  currentFilter = type;
+  window.loadMyPage();
+};
+
+// 마이페이지 로드
 window.loadMyPage = async () => {
   const emailDiv = document.getElementById("my-email");
   const listDiv = document.getElementById("my-products");
@@ -22,38 +30,50 @@ window.loadMyPage = async () => {
     // 내 상품만
     if (product.sellerEmail !== userEmail) return;
 
+    // 필터
+    if (currentFilter === "selling" && product.sold) return;
+    if (currentFilter === "sold" && !product.sold) return;
+
     const div = document.createElement("div");
     div.className = "product-card";
 
-    // 판매 완료면 흐리게
     if (product.sold) div.classList.add("sold");
 
-    // 내용
-    const title = document.createElement("h4");
-    title.textContent = product.title;
+    div.innerHTML = `
+      <h4>${product.title}</h4>
+      <p>${product.price}원</p>
+      ${product.sold ? `<p class="sold-text">판매 완료</p>` : ""}
+    `;
 
-    const price = document.createElement("p");
-    price.textContent = product.price + "원";
-
-    div.appendChild(title);
-    div.appendChild(price);
-
-    // 판매 완료 표시
-    if (product.sold) {
-      const soldText = document.createElement("p");
-      soldText.textContent = "판매 완료";
-      soldText.className = "sold-text";
-      div.appendChild(soldText);
-    }
-
-    // 🔥 판매 완료 버튼 추가 (핵심)
+    // 판매완료 버튼
     if (!product.sold) {
-      const btn = document.createElement("button");
-      btn.textContent = "판매 완료";
-      btn.className = "sold-btn";
-      btn.onclick = () => markAsSold(docSnap.id);
-      div.appendChild(btn);
+      const soldBtn = document.createElement("button");
+      soldBtn.textContent = "판매 완료";
+      soldBtn.className = "sold-btn";
+      soldBtn.onclick = () => markAsSold(docSnap.id);
+      div.appendChild(soldBtn);
     }
+
+    // 🔥 삭제 버튼
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "삭제";
+    deleteBtn.style.backgroundColor = "#555";
+    deleteBtn.style.color = "white";
+
+    deleteBtn.onclick = async () => {
+      if (!confirm("정말 삭제하시겠습니까?")) return;
+
+      const { doc, deleteDoc } = await import(
+        "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js"
+      );
+
+      await deleteDoc(doc(db, "products", docSnap.id));
+
+      alert("삭제되었습니다.");
+      window.loadMyPage();
+    };
+
+    div.appendChild(deleteBtn);
 
     const hr = document.createElement("hr");
     div.appendChild(hr);
@@ -62,7 +82,7 @@ window.loadMyPage = async () => {
   });
 };
 
-// 🔥 판매 완료 처리 함수
+// 판매완료 처리
 window.markAsSold = async (productId) => {
   try {
     const { doc, updateDoc } = await import(
@@ -74,10 +94,7 @@ window.markAsSold = async (productId) => {
 
     alert("판매 완료 처리되었습니다.");
 
-    // 마이페이지 다시 불러오기
-    if (window.loadMyPage) window.loadMyPage();
-
-    // 상품목록도 갱신 (있으면)
+    window.loadMyPage();
     if (window.showProducts) window.showProducts();
 
   } catch (e) {
