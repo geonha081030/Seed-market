@@ -14,45 +14,25 @@ body {
   max-width: 700px;
   margin: auto;
   padding: 25px;
-  background-color: #fefefe;
+  background-color: #ffffff;
   border-radius: 16px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-}
-
-h2, h3 {
-  text-align: center;
-  color: #6d4c41;
 }
 
 /* ==============================
    입력칸
 ============================== */
 input, textarea {
-  display: block;
   width: 100%;
-  padding: 14px 18px;
+  padding: 14px;
   margin: 10px 0;
+  border-radius: 10px;
+  border: 2px solid #ccc;
   font-size: 16px;
-  border: 2px solid #cfd8dc;
-  border-radius: 12px;
-  box-sizing: border-box;
-  transition: all 0.3s;
-  background-color: #fff8e1;
-}
-
-input:focus, textarea:focus {
-  border-color: #ffab91;
-  box-shadow: 0 0 8px rgba(255, 171, 145, 0.5);
-  outline: none;
-}
-
-textarea {
-  min-height: 100px;
-  resize: vertical;
 }
 
 /* ==============================
-   버튼
+   버튼 기본
 ============================== */
 button {
   padding: 14px 25px;
@@ -61,32 +41,32 @@ button {
   border: none;
   cursor: pointer;
   margin: 8px 0;
-  transition: 0.3s;
-  color: #fff;
-}
-
-/* 주요 버튼 색상 - 파스텔 톤 */
-#login-btn, #signup-btn, #go-add-btn, #go-list-btn, 
-#logout-btn, #add-product-btn, #back-main-btn, #back-main-from-list-btn {
-  background-color: #ffccbc;
-}
-
-#login-btn:hover, #signup-btn:hover, #go-add-btn:hover, #go-list-btn:hover,
-#logout-btn:hover, #add-product-btn:hover, #back-main-btn:hover, #back-main-from-list-btn:hover {
-  background-color: #ffab91;
-}
-
-/* 판매 완료 버튼 - 더 진한 핑크 */
-button.sold-btn {
-  background-color: #d81b60; /* 진한 핑크 */
-}
-
-button.sold-btn:hover {
-  background-color: #c2185b;
 }
 
 /* ==============================
-   상품 목록
+   🔥 판매 완료 버튼 (핵심)
+============================== */
+.sold-btn {
+  background-color: #d81b60 !important; /* 진한 핑크 */
+  color: #ffffff !important;
+  border: none !important;
+  opacity: 1 !important;
+}
+
+/* hover */
+.sold-btn:hover {
+  background-color: #ad1457 !important;
+}
+
+/* disabled 상태도 동일하게 유지 */
+.sold-btn:disabled {
+  background-color: #d81b60 !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+/* ==============================
+   상품 카드
 ============================== */
 .product-card {
   border: 1px solid #ddd;
@@ -94,45 +74,19 @@ button.sold-btn:hover {
   padding: 16px;
   margin-bottom: 16px;
   background-color: #e1f5fe;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.product-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-}
-
-/* 판매 완료 상품 - 차별화 강화 */
+/* 🔥 판매 완료 카드 */
 .product-card.sold {
-  background-color: #ff8a65; /* 주황-핑크 강한 색 */
-  border: 2px solid #d84315;
-  color: #fff;
-  opacity: 1;
+  background-color: #ff5252 !important;
+  border: 3px solid #b71c1c;
+  color: white;
 }
 
-.product-card.sold h4, 
+.product-card.sold h4,
 .product-card.sold p {
-  color: #fff;
+  color: white !important;
   font-weight: bold;
-}
-
-/* 상품 제목 */
-.product-card h4 {
-  margin: 0 0 8px 0;
-  color: #37474f;
-}
-
-/* 가격, 설명 */
-.product-card p {
-  margin: 4px 0;
-  font-size: 15px;
-}
-
-/* 구분선 */
-.product-card hr {
-  border: 0.5px solid #cfd8dc;
-  margin: 10px 0;
 }
 
 /* ==============================
@@ -140,60 +94,8 @@ button.sold-btn:hover {
 ============================== */
 #product-search {
   width: 100%;
-  padding: 12px 16px;
-  font-size: 15px;
-  border-radius: 12px;
-  border: 2px solid #cfd8dc;
-  margin-bottom: 18px;
-  box-sizing: border-box;
-  transition: 0.3s;
-  background-color: #dcedc8;
-}
-
-#product-search:focus {
-  border-color: #aed581;
-  box-shadow: 0 0 6px rgba(174, 213, 129, 0.5);
-}
-
-/* ==============================
-   채팅창 (상품 상세)
-============================== */
-#chat-list {
-  border: 1px solid #ddd;
-  border-radius: 12px;
   padding: 12px;
-  max-height: 250px;
-  overflow-y: auto;
-  background-color: #fff9c4;
-  margin-bottom: 12px;
-}
-
-#chat-input {
-  width: calc(100% - 90px);
-  padding: 12px;
-  font-size: 15px;
   border-radius: 10px;
-  border: 2px solid #cfd8dc;
-  background-color: #f0f4c3;
-}
-
-#chat-send-btn {
-  width: 80px;
-  padding: 12px;
-  margin-left: 8px;
-  font-size: 15px;
-  border-radius: 10px;
-  background-color: #81d4fa;
-  color: #fff;
-  cursor: pointer;
-}
-
-/* ==============================
-   마이페이지 (예비)
-============================== */
-#my-page {
-  padding: 18px;
-  background-color: #f8bbd0;
-  border-radius: 16px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  border: 2px solid #ccc;
+  margin-bottom: 15px;
 }
