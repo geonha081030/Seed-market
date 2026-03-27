@@ -1,15 +1,15 @@
 import { db, auth } from './firebase-config.js';
-import { collection, getDocs } 
+import { collection, getDocs, doc, updateDoc } 
 from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-let currentFilter = "all";
+window.showMyPage = async () => {
 
-window.setFilter = (type) => {
-  currentFilter = type;
-  window.loadMyPage();
-};
+  document.getElementById("main-screen").style.display = "none";
+  document.getElementById("mypage-screen").style.display = "block";
 
-window.loadMyPage = async () => {
+  const email = auth.currentUser.email;
+  document.getElementById("my-email").textContent = email;
+
   const listDiv = document.getElementById("my-products");
   listDiv.innerHTML = "";
 
@@ -18,14 +18,10 @@ window.loadMyPage = async () => {
   snapshot.forEach(docSnap => {
     const product = docSnap.data();
 
-    if (product.sellerEmail !== auth.currentUser.email) return;
-
-    if (currentFilter === "selling" && product.sold) return;
-    if (currentFilter === "sold" && !product.sold) return;
+    if (product.sellerEmail !== email) return;
 
     const div = document.createElement("div");
-    div.className = "product-card";
-    div.style.cursor = "pointer";
+    div.classList.add("product-item");
 
     if (product.sold) div.classList.add("sold");
 
@@ -35,41 +31,27 @@ window.loadMyPage = async () => {
       ${product.sold ? `<p class="sold-text">판매 완료</p>` : ""}
     `;
 
-    // 🔥 클릭 이동
-    div.onclick = () => {
-      window.showProductDetailScreen(docSnap.id);
-    };
+    if (!product.sold) {
+      const btn = document.createElement("button");
+      btn.textContent = "판매완료";
 
-    // 수정 버튼
-    const editBtn = document.createElement("button");
-    editBtn.textContent = "수정";
+      btn.onclick = async () => {
+        const ref = doc(db, "products", docSnap.id);
+        await updateDoc(ref, { sold: true });
+        showMyPage();
+      };
 
-    editBtn.onclick = (e) => {
-      e.stopPropagation();
-      alert("수정 기능은 그대로 유지됨");
-    };
-
-    div.appendChild(editBtn);
-
-    // 삭제 버튼
-    const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "삭제";
-
-    deleteBtn.onclick = async (e) => {
-      e.stopPropagation();
-
-      const { doc, deleteDoc } = await import(
-        "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js"
-      );
-
-      await deleteDoc(doc(db, "products", docSnap.id));
-
-      alert("삭제 완료");
-      window.loadMyPage();
-    };
-
-    div.appendChild(deleteBtn);
+      div.appendChild(btn);
+    }
 
     listDiv.appendChild(div);
   });
 };
+
+document.getElementById("go-mypage-btn").addEventListener("click", () => {
+  window.showMyPage();
+});
+
+document.getElementById("back-main-from-mypage-btn").addEventListener("click", () => {
+  window.showMainScreen();
+});
