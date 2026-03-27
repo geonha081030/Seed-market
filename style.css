@@ -1,68 +1,200 @@
-/* style.css 전체 - 강제 적용 */
-
+/* ==============================
+   전체 페이지 기본
+============================== */
 body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #f0f2f5;
+  color: #333;
+  margin: 0;
+  padding: 20px;
 }
 
-/* 로그인/회원가입/메인/상품 등록/검색 입력칸 */
-#login-screen input,
-#signup-screen input,
-#product-add-screen input,
-#product-add-screen textarea,
-#product-list-screen input {
+/* 중앙 정렬 */
+body > div {
+  max-width: 650px;
+  margin: auto;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* ==============================
+   제목
+============================== */
+h2, h3 {
+  color: #2c3e50;
+  text-align: center;
+}
+
+/* ==============================
+   입력칸 & 텍스트 영역
+============================== */
+input, textarea {
   display: block;
-  margin: 10px 0 !important;
-  padding: 12px !important;
-  width: 400px !important;
-  font-size: 16px !important;
+  width: 100%;
+  max-width: 100%;
+  padding: 12px 15px;
+  margin: 10px 0;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
   box-sizing: border-box;
+  transition: 0.3s;
 }
 
-/* 모든 버튼 */
+input:focus, textarea:focus {
+  border-color: #4CAF50;
+  outline: none;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* ==============================
+   버튼
+============================== */
 button {
-  margin: 10px 0 !important;
-  padding: 12px 24px !important;
-  font-size: 16px !important;
+  padding: 12px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
   cursor: pointer;
+  margin: 8px 0;
+  transition: 0.3s;
 }
 
-/* 상품 카드 */
+/* 기본 버튼 색상 */
+button#login-btn,
+button#signup-btn,
+button#go-add-btn,
+button#go-list-btn,
+button#logout-btn,
+button#add-product-btn,
+button#back-main-btn,
+button#back-main-from-list-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+button#login-btn:hover,
+button#signup-btn:hover,
+button#go-add-btn:hover,
+button#go-list-btn:hover,
+button#logout-btn:hover,
+button#add-product-btn:hover,
+button#back-main-btn:hover,
+button#back-main-from-list-btn:hover {
+  background-color: #45a049;
+}
+
+/* 판매 완료 버튼 */
+button.sold-btn {
+  background-color: #ff4d4f;
+}
+
+button.sold-btn:hover {
+  background-color: #e03e3e;
+}
+
+/* ==============================
+   상품 목록
+============================== */
 .product-card {
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
+  border-radius: 10px;
   padding: 15px;
   margin-bottom: 15px;
-  border-radius: 5px;
-  background-color: #f9f9f9;
+  background-color: #fafafa;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  transition: 0.2s;
 }
 
-/* 판매 완료 상품 */
+.product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* 판매 완료 표시 */
 .product-card.sold {
-  background-color: #f0f0f0;
-  opacity: 0.7;
+  background-color: #ffe6e6;
+  opacity: 0.8;
+}
+
+.product-card.sold p {
+  color: #a94442;
+  font-weight: bold;
 }
 
 /* 상품 제목 */
 .product-card h4 {
-  margin: 0 0 5px 0;
-  font-size: 18px;
+  margin: 0 0 8px 0;
+  color: #2c3e50;
 }
 
-/* 상품 가격/설명 */
+/* 가격, 설명 */
 .product-card p {
-  margin: 3px 0;
-  font-size: 16px;
-}
-
-/* 판매 완료 표시 */
-.product-card .sold-text {
-  color: red;
-  font-weight: bold;
+  margin: 5px 0;
+  font-size: 14px;
 }
 
 /* 구분선 */
 .product-card hr {
+  border: 0.5px solid #ddd;
   margin: 10px 0;
-  border: 0;
-  border-top: 1px solid #ccc;
+}
+
+/* ==============================
+   검색창
+============================== */
+#product-search {
+  margin-bottom: 15px;
+  padding: 10px 12px;
+  font-size: 15px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#product-search:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+/* ==============================
+   채팅창 (product-detail)
+============================== */
+#chat-list {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  max-height: 250px;
+  overflow-y: auto;
+  background-color: #fefefe;
+  margin-bottom: 10px;
+}
+
+#chat-input {
+  width: calc(100% - 90px);
+  display: inline-block;
+}
+
+#chat-send-btn {
+  width: 70px;
+  display: inline-block;
+  margin-left: 10px;
+}
+
+/* ==============================
+   마이페이지 (예비)
+============================== */
+#my-page {
+  padding: 15px;
+  background-color: #f7f9fc;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
