@@ -1,5 +1,6 @@
 import { db, auth } from './firebase-config.js';
-import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+import { collection, getDocs, query, orderBy } 
+  from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 window.showProducts = async () => {
   const listDiv = document.getElementById("product-list");
@@ -13,24 +14,31 @@ window.showProducts = async () => {
   querySnapshot.forEach(docSnap => {
     const product = docSnap.data();
 
-    // 검색어 필터링
+    // 검색 필터
     if(searchInput && !product.title.toLowerCase().includes(searchInput)) return;
 
     const productDiv = document.createElement("div");
     productDiv.classList.add("product-card");
 
-    // 판매 완료 시 스타일 변경
+    // 🔥 판매 완료면 sold 클래스 추가 (핵심)
     if(product.sold){
-      productDiv.style.backgroundColor = "#f0f0f0";  // 회색 배경
-      productDiv.style.opacity = "0.7";              // 약간 투명
+      productDiv.classList.add("sold");
     }
 
     productDiv.innerHTML = `
       <h4>${product.title}</h4>
       <p>가격: ${product.price}원</p>
       <p>${product.description || ""}</p>
-      ${product.sold ? `<p style="color:red; font-weight:bold;">판매 완료</p>` : ""}
-      ${product.sellerEmail === auth.currentUser.email && !product.sold ? `<button onclick="markAsSold('${docSnap.id}')">판매 완료</button>` : ""}
+      <p>등록일: ${product.createdAt ? product.createdAt.toDate().toLocaleString() : ""}</p>
+
+      ${product.sold ? `<p style="font-weight:bold;">판매 완료</p>` : ""}
+
+      ${
+        product.sellerEmail === auth.currentUser.email && !product.sold 
+        ? `<button class="sold-btn" onclick="markAsSold('${docSnap.id}')">판매 완료</button>` 
+        : ""
+      }
+
       <hr>
     `;
 
@@ -38,17 +46,18 @@ window.showProducts = async () => {
   });
 };
 
-// 검색창 입력 이벤트
+// 검색 이벤트
 document.getElementById("product-search").addEventListener("input", () => {
   window.showProducts();
 });
 
-// 판매 완료 처리 함수
+// 판매 완료 처리
 window.markAsSold = async (productId) => {
   try {
     const { doc, updateDoc } = await import("https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js");
     const productRef = doc(db, "products", productId);
     await updateDoc(productRef, { sold: true });
+
     if(window.showProducts) window.showProducts();
     alert("판매 완료 처리되었습니다.");
   } catch(e) {
