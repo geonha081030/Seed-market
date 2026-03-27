@@ -70,6 +70,24 @@
     <button id="back-main-from-list-btn">메인 화면으로</button>
   </div>
 
+  <!-- 🔥 상품 상세 + 채팅 -->
+  <div id="product-detail-screen" style="display:none;">
+    <h3 id="detail-title"></h3>
+    <p id="detail-price"></p>
+    <p id="detail-desc"></p>
+    <p id="detail-sold"></p>
+
+    <button id="detail-sold-btn">판매 완료</button>
+
+    <h4>채팅</h4>
+    <div id="chat-list" style="height:200px; overflow:auto; border:1px solid #ccc;"></div>
+    <input id="chat-input" placeholder="메시지 입력">
+    <button id="chat-send-btn">전송</button>
+
+    <button id="back-main-from-detail-btn">메인으로</button>
+  </div>
+
+  <!-- 스크립트 -->
   <script type="module" src="firebase-config.js"></script>
   <script type="module" src="auth.js"></script>
   <script type="module" src="product.js"></script>
