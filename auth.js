@@ -7,60 +7,73 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
-// ==============================
-// 화면 전환
-// ==============================
+// 🔥 화면 전환 공통
+function hideAll() {
+  const screens = [
+    "login-screen",
+    "signup-screen",
+    "main-screen",
+    "product-add-screen",
+    "product-list-screen",
+    "product-detail-screen",
+    "mypage-screen"
+  ];
 
+  screens.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = "none";
+  });
+}
+
+// 로그인 화면
 window.showLoginScreen = () => {
+  hideAll();
   document.getElementById("login-screen").style.display = "block";
-  document.getElementById("signup-screen").style.display = "none";
-  document.getElementById("main-screen").style.display = "none";
-  document.getElementById("product-add-screen").style.display = "none";
-  document.getElementById("product-list-screen").style.display = "none";
-  document.getElementById("mypage-screen").style.display = "none";
 };
 
+// 회원가입 화면
 window.showSignupScreen = () => {
-  document.getElementById("login-screen").style.display = "none";
+  hideAll();
   document.getElementById("signup-screen").style.display = "block";
-  document.getElementById("main-screen").style.display = "none";
-  document.getElementById("product-add-screen").style.display = "none";
-  document.getElementById("product-list-screen").style.display = "none";
-  document.getElementById("mypage-screen").style.display = "none";
 };
 
+// 메인 화면
 window.showMainScreen = () => {
+  hideAll();
   document.getElementById("main-screen").style.display = "block";
-  document.getElementById("login-screen").style.display = "none";
-  document.getElementById("signup-screen").style.display = "none";
-  document.getElementById("product-add-screen").style.display = "none";
-  document.getElementById("product-list-screen").style.display = "none";
-  document.getElementById("mypage-screen").style.display = "none";
 };
 
+// 상품 등록 화면
 window.showAddProductScreen = () => {
-  document.getElementById("main-screen").style.display = "none";
+  hideAll();
   document.getElementById("product-add-screen").style.display = "block";
 };
 
+// 상품 목록 화면
 window.showProductListScreen = () => {
-  document.getElementById("main-screen").style.display = "none";
+  hideAll();
   document.getElementById("product-list-screen").style.display = "block";
-  if(window.showProducts) window.showProducts();
+  if (window.showProducts) window.showProducts();
 };
 
-// 🔥 마이페이지 화면
-window.showMyPageScreen = () => {
-  document.getElementById("main-screen").style.display = "none";
-  document.getElementById("mypage-screen").style.display = "block";
+// 🔥 버튼 연결
+document.getElementById("show-signup-btn").addEventListener("click", () => {
+  window.showSignupScreen();
+});
 
-  if(window.loadMyPage) window.loadMyPage();
-};
+document.getElementById("back-to-login-btn").addEventListener("click", () => {
+  window.showLoginScreen();
+});
 
-// ==============================
+document.getElementById("go-add-btn").addEventListener("click", () => {
+  window.showAddProductScreen();
+});
+
+document.getElementById("back-main-btn").addEventListener("click", () => {
+  window.showMainScreen();
+});
+
 // 회원가입
-// ==============================
-
 document.getElementById("signup-btn").addEventListener("click", async () => {
   const email = document.getElementById("signup-email").value;
   const password = document.getElementById("signup-password").value;
@@ -68,19 +81,14 @@ document.getElementById("signup-btn").addEventListener("click", async () => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     await sendEmailVerification(userCredential.user);
-
     alert("회원가입 완료! 이메일 인증 후 로그인하세요.");
     window.showLoginScreen();
-
   } catch (e) {
     alert("회원가입 오류: " + e.message);
   }
 });
 
-// ==============================
 // 로그인
-// ==============================
-
 document.getElementById("login-btn").addEventListener("click", async () => {
   const email = document.getElementById("login-email").value;
   const password = document.getElementById("login-password").value;
@@ -95,17 +103,13 @@ document.getElementById("login-btn").addEventListener("click", async () => {
     }
 
     window.showMainScreen();
-
   } catch (e) {
     alert("로그인 실패: " + e.message);
   }
 });
 
-// ==============================
 // 자동 로그인
-// ==============================
-
-onAuthStateChanged(auth, user => {
+onAuthStateChanged(auth, (user) => {
   if (user && user.emailVerified) {
     window.showMainScreen();
   } else {
@@ -113,10 +117,7 @@ onAuthStateChanged(auth, user => {
   }
 });
 
-// ==============================
 // 로그아웃
-// ==============================
-
 document.getElementById("logout-btn").addEventListener("click", async () => {
   try {
     await signOut(auth);
@@ -125,16 +126,3 @@ document.getElementById("logout-btn").addEventListener("click", async () => {
     alert("로그아웃 실패: " + e.message);
   }
 });
-
-// ==============================
-// 버튼 이벤트
-// ==============================
-
-document.getElementById("show-signup-btn").addEventListener("click", () => window.showSignupScreen());
-document.getElementById("back-to-login-btn").addEventListener("click", () => window.showLoginScreen());
-document.getElementById("go-add-btn").addEventListener("click", () => window.showAddProductScreen());
-document.getElementById("go-list-btn").addEventListener("click", () => window.showProductListScreen());
-document.getElementById("go-mypage-btn").addEventListener("click", () => window.showMyPageScreen());
-document.getElementById("back-main-btn").addEventListener("click", () => window.showMainScreen());
-document.getElementById("back-main-from-list-btn").addEventListener("click", () => window.showMainScreen());
-document.getElementById("back-main-from-mypage-btn").addEventListener("click", () => window.showMainScreen());
