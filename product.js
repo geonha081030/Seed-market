@@ -1,5 +1,5 @@
 import { db, storage, auth } from './firebase-config.js';
-import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-storage.js";
 
 // DOM이 완전히 로드된 후 버튼 이벤트 등록
@@ -32,13 +32,13 @@ document.addEventListener("DOMContentLoaded", () => {
         imageUrl = await getDownloadURL(snapshot.ref);
       }
 
+      // Firestore에 저장 (시간/날짜 제거)
       const docRef = await addDoc(collection(db, "products"), {
         title,
         price: Number(price),
         description: desc,
         imageUrl,
-        sellerEmail: auth.currentUser.email,
-        createdAt: serverTimestamp()
+        sellerEmail: auth.currentUser.email
       });
 
       console.log("Firestore 저장 완료, ID:", docRef.id);
