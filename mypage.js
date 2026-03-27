@@ -4,13 +4,11 @@ from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 let currentFilter = "all";
 
-// 필터 변경
 window.setFilter = (type) => {
   currentFilter = type;
   window.loadMyPage();
 };
 
-// 마이페이지 로드
 window.loadMyPage = async () => {
   const emailDiv = document.getElementById("my-email");
   const listDiv = document.getElementById("my-products");
@@ -27,10 +25,8 @@ window.loadMyPage = async () => {
   snapshot.forEach(docSnap => {
     const product = docSnap.data();
 
-    // 내 상품만
     if (product.sellerEmail !== userEmail) return;
 
-    // 필터
     if (currentFilter === "selling" && product.sold) return;
     if (currentFilter === "sold" && !product.sold) return;
 
@@ -39,13 +35,16 @@ window.loadMyPage = async () => {
 
     if (product.sold) div.classList.add("sold");
 
-    // 내용
-    div.innerHTML = `
+    // 🔥 기본 보기 영역
+    const contentDiv = document.createElement("div");
+    contentDiv.innerHTML = `
       <h4>${product.title}</h4>
       <p>${product.price}원</p>
       <p>${product.description || ""}</p>
       ${product.sold ? `<p class="sold-text">판매 완료</p>` : ""}
     `;
+
+    div.appendChild(contentDiv);
 
     // 🔥 수정 버튼
     const editBtn = document.createElement("button");
@@ -54,21 +53,52 @@ window.loadMyPage = async () => {
     editBtn.style.color = "white";
 
     editBtn.onclick = () => {
-      const newTitle = prompt("새 상품명", product.title);
-      const newPrice = prompt("새 가격", product.price);
-      const newDesc = prompt("새 설명", product.description || "");
+      div.innerHTML = ""; // 기존 내용 제거
 
-      if (!newTitle || !newPrice) {
-        alert("상품명과 가격은 필수입니다.");
-        return;
-      }
+      const titleInput = document.createElement("input");
+      titleInput.value = product.title;
 
-      updateProduct(docSnap.id, newTitle, newPrice, newDesc);
+      const priceInput = document.createElement("input");
+      priceInput.type = "number";
+      priceInput.value = product.price;
+
+      const descInput = document.createElement("textarea");
+      descInput.value = product.description || "";
+
+      const saveBtn = document.createElement("button");
+      saveBtn.textContent = "저장";
+      saveBtn.className = "sold-btn";
+
+      saveBtn.onclick = async () => {
+        if (!titleInput.value || !priceInput.value) {
+          alert("상품명과 가격은 필수입니다.");
+          return;
+        }
+
+        const { doc, updateDoc } = await import(
+          "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js"
+        );
+
+        await updateDoc(doc(db, "products", docSnap.id), {
+          title: titleInput.value,
+          price: Number(priceInput.value),
+          description: descInput.value
+        });
+
+        alert("수정 완료!");
+        window.loadMyPage();
+        if (window.showProducts) window.showProducts();
+      };
+
+      div.appendChild(titleInput);
+      div.appendChild(priceInput);
+      div.appendChild(descInput);
+      div.appendChild(saveBtn);
     };
 
     div.appendChild(editBtn);
 
-    // 🔥 판매완료 버튼
+    // 판매완료 버튼
     if (!product.sold) {
       const soldBtn = document.createElement("button");
       soldBtn.textContent = "판매 완료";
@@ -77,7 +107,7 @@ window.loadMyPage = async () => {
       div.appendChild(soldBtn);
     }
 
-    // 🔥 삭제 버튼
+    // 삭제 버튼
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "삭제";
     deleteBtn.style.backgroundColor = "#555";
@@ -105,43 +135,16 @@ window.loadMyPage = async () => {
   });
 };
 
-// 🔥 상품 수정 함수
-window.updateProduct = async (productId, title, price, desc) => {
-  try {
-    const { doc, updateDoc } = await import(
-      "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js"
-    );
-
-    const productRef = doc(db, "products", productId);
-
-    await updateDoc(productRef, {
-      title: title,
-      price: Number(price),
-      description: desc
-    });
-
-    alert("수정 완료!");
-
-    window.loadMyPage();
-    if (window.showProducts) window.showProducts();
-
-  } catch (e) {
-    alert("수정 실패: " + e.message);
-  }
-};
-
-// 판매완료 처리
+// 판매완료
 window.markAsSold = async (productId) => {
   try {
     const { doc, updateDoc } = await import(
       "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js"
     );
 
-    const productRef = doc(db, "products", productId);
-    await updateDoc(productRef, { sold: true });
+    await updateDoc(doc(db, "products", productId), { sold: true });
 
     alert("판매 완료 처리되었습니다.");
-
     window.loadMyPage();
     if (window.showProducts) window.showProducts();
 
