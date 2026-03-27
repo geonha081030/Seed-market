@@ -1,5 +1,5 @@
 import { db, auth } from './firebase-config.js';
-import { collection, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+import { collection, addDoc, serverTimestamp, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 // 상품 등록
 document.getElementById("add-product-btn").addEventListener("click", async () => {
@@ -18,7 +18,8 @@ document.getElementById("add-product-btn").addEventListener("click", async () =>
       price: Number(price),
       description: desc,
       sellerEmail: auth.currentUser.email,
-      sold: false
+      sold: false,
+      createdAt: serverTimestamp()
     });
 
     alert("상품 등록 완료!");
@@ -34,8 +35,8 @@ window.markAsSold = async (productId) => {
   try {
     const productRef = doc(db, "products", productId);
     await updateDoc(productRef, { sold: true });
-    alert("판매 완료 처리되었습니다.");
     if(window.showProducts) window.showProducts();
+    alert("판매 완료 처리되었습니다.");
   } catch(e) {
     console.error(e);
     alert("판매 완료 처리 실패: " + e.message);
