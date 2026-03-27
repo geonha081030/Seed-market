@@ -1,96 +1,66 @@
-/* ==============================
-   전체 페이지
-============================== */
+/* 전체 */
 body {
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: Arial, sans-serif;
   background-color: #fff7f8;
-  margin: 0;
   padding: 20px;
-  color: #333;
 }
 
+/* 화면 박스 */
 #login-screen, #signup-screen, #main-screen, 
 #product-add-screen, #product-list-screen {
   max-width: 700px;
   margin: auto;
-  padding: 25px;
-  background-color: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  padding: 20px;
+  background: white;
+  border-radius: 15px;
 }
 
-/* ==============================
-   입력칸
-============================== */
+/* 입력 */
 input, textarea {
   width: 100%;
-  padding: 14px;
-  margin: 10px 0;
-  border-radius: 10px;
-  border: 2px solid #ccc;
-  font-size: 16px;
-}
-
-/* ==============================
-   버튼
-============================== */
-button {
-  padding: 14px 25px;
-  font-size: 16px;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
+  padding: 12px;
   margin: 8px 0;
+  border-radius: 10px;
+  border: 1px solid #ccc;
 }
 
-/* 🔥 판매 완료 버튼 (진하게 유지) */
+/* 버튼 */
+button {
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  margin: 5px 0;
+  cursor: pointer;
+}
+
+/* 🔥 판매 완료 버튼 */
 .sold-btn {
   background-color: #d81b60 !important;
-  color: #ffffff !important;
+  color: white !important;
 }
 
-.sold-btn:hover {
-  background-color: #ad1457 !important;
-}
-
-/* ==============================
-   상품 카드
-============================== */
+/* 상품 카드 */
 .product-card {
-  border: 1px solid #ddd;
-  border-radius: 16px;
-  padding: 16px;
-  margin-bottom: 16px;
-  background-color: #e1f5fe;
-  transition: 0.2s;
+  background: #e1f5fe;
+  padding: 15px;
+  border-radius: 15px;
+  margin-bottom: 15px;
 }
 
-/* 🔥 판매 완료 상품 (덜 눈에 띄게 핵심) */
+/* 🔥 판매 완료 상품 (덜 눈에 띄게) */
 .product-card.sold {
-  background-color: #f5f5f5;
-  border: 1px solid #ddd;
+  background: #eeeeee;
   opacity: 0.6;
 }
 
 /* 텍스트 흐리게 */
 .product-card.sold h4,
 .product-card.sold p {
-  color: #999 !important;
+  color: #888;
 }
 
-/* 판매 완료 텍스트만 강조 */
-.product-card.sold .sold-text {
+/* 판매 완료 글자만 살짝 강조 */
+.sold-text {
   color: #ff7043;
   font-weight: bold;
-}
-
-/* ==============================
-   검색창
-============================== */
-#product-search {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: 2px solid #ccc;
-  margin-bottom: 15px;
 }
