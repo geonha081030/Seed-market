@@ -7,7 +7,7 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
-// 화면 전환 함수
+// 화면 전환
 window.showLoginScreen = () => {
   document.getElementById("login-screen").style.display = "block";
   document.getElementById("signup-screen").style.display = "none";
@@ -40,7 +40,7 @@ window.showAddProductScreen = () => {
 window.showProductListScreen = () => {
   document.getElementById("main-screen").style.display = "none";
   document.getElementById("product-list-screen").style.display = "block";
-  if(window.showProducts) window.showProducts(); 
+  if(window.showProducts) window.showProducts();
 }
 
 // 회원가입
