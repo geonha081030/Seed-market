@@ -1,4 +1,4 @@
-import { db } from './firebase-config.js';
+import { db, auth } from './firebase-config.js';
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 window.showProducts = async () => {
@@ -7,17 +7,25 @@ window.showProducts = async () => {
 
   try {
     const snapshot = await getDocs(collection(db, "products"));
-    snapshot.forEach(doc => {
-      const data = doc.data();
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
       const itemDiv = document.createElement("div");
       itemDiv.className = "product-item";
+
       itemDiv.innerHTML = `
-        <h4>${data.title}</h4>
+        <h4>${data.title} ${data.sold ? "(판매 완료)" : ""}</h4>
         <p>가격: ${data.price}원</p>
         <p>${data.description}</p>
-        ${data.imageUrl ? `<img src="${data.imageUrl}" style="max-width:150px;">` : ""}
         <p>판매자: ${data.sellerEmail}</p>
       `;
+
+      if(data.sellerEmail === auth.currentUser.email && !data.sold){
+        const soldBtn = document.createElement("button");
+        soldBtn.textContent = "판매 완료";
+        soldBtn.addEventListener("click", () => window.markAsSold(docSnap.id));
+        itemDiv.appendChild(soldBtn);
+      }
+
       listDiv.appendChild(itemDiv);
     });
   } catch (e) {
