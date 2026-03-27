@@ -14,13 +14,14 @@ window.showProducts = async () => {
   querySnapshot.forEach(docSnap => {
     const product = docSnap.data();
 
+    // 검색 필터
     if (searchInput && !product.title.toLowerCase().includes(searchInput)) return;
 
     // 카드 생성
     const productDiv = document.createElement("div");
     productDiv.className = "product-card";
 
-    // 🔥 판매 완료면 흐리게
+    // 판매 완료면 흐리게
     if (product.sold) {
       productDiv.classList.add("sold");
     }
@@ -37,10 +38,10 @@ window.showProducts = async () => {
     const desc = document.createElement("p");
     desc.textContent = product.description || "";
 
-    // 날짜
+    // 등록일
     const date = document.createElement("p");
-    date.textContent = product.createdAt 
-      ? "등록일: " + product.createdAt.toDate().toLocaleString() 
+    date.textContent = product.createdAt
+      ? "등록일: " + product.createdAt.toDate().toLocaleString()
       : "";
 
     productDiv.appendChild(title);
@@ -48,7 +49,7 @@ window.showProducts = async () => {
     productDiv.appendChild(desc);
     productDiv.appendChild(date);
 
-    // 판매 완료 텍스트
+    // 판매 완료 표시
     if (product.sold) {
       const soldText = document.createElement("p");
       soldText.textContent = "판매 완료";
@@ -56,7 +57,7 @@ window.showProducts = async () => {
       productDiv.appendChild(soldText);
     }
 
-    // 🔥 판매 완료 버튼 (핵심)
+    // 🔥 판매 완료 버튼 (내 상품일 때만)
     if (product.sellerEmail === auth.currentUser.email && !product.sold) {
       const btn = document.createElement("button");
       btn.textContent = "판매 완료";
@@ -65,6 +66,7 @@ window.showProducts = async () => {
       productDiv.appendChild(btn);
     }
 
+    // 구분선
     const hr = document.createElement("hr");
     productDiv.appendChild(hr);
 
@@ -72,7 +74,7 @@ window.showProducts = async () => {
   });
 };
 
-// 검색
+// 검색 이벤트
 document.getElementById("product-search").addEventListener("input", () => {
   window.showProducts();
 });
@@ -80,9 +82,11 @@ document.getElementById("product-search").addEventListener("input", () => {
 // 판매 완료 처리
 window.markAsSold = async (productId) => {
   try {
-    const { doc, updateDoc } = await import("https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js");
-    const productRef = doc(db, "products", productId);
+    const { doc, updateDoc } = await import(
+      "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js"
+    );
 
+    const productRef = doc(db, "products", productId);
     await updateDoc(productRef, { sold: true });
 
     alert("판매 완료 처리되었습니다.");
