@@ -32,7 +32,7 @@ input, textarea {
 }
 
 /* ==============================
-   버튼 기본
+   버튼
 ============================== */
 button {
   padding: 14px 25px;
@@ -43,26 +43,14 @@ button {
   margin: 8px 0;
 }
 
-/* ==============================
-   🔥 판매 완료 버튼 (핵심)
-============================== */
+/* 🔥 판매 완료 버튼 (진하게 유지) */
 .sold-btn {
-  background-color: #d81b60 !important; /* 진한 핑크 */
-  color: #ffffff !important;
-  border: none !important;
-  opacity: 1 !important;
-}
-
-/* hover */
-.sold-btn:hover {
-  background-color: #ad1457 !important;
-}
-
-/* disabled 상태도 동일하게 유지 */
-.sold-btn:disabled {
   background-color: #d81b60 !important;
   color: #ffffff !important;
-  opacity: 1 !important;
+}
+
+.sold-btn:hover {
+  background-color: #ad1457 !important;
 }
 
 /* ==============================
@@ -74,18 +62,25 @@ button {
   padding: 16px;
   margin-bottom: 16px;
   background-color: #e1f5fe;
+  transition: 0.2s;
 }
 
-/* 🔥 판매 완료 카드 */
+/* 🔥 판매 완료 상품 (덜 눈에 띄게 핵심) */
 .product-card.sold {
-  background-color: #ff5252 !important;
-  border: 3px solid #b71c1c;
-  color: white;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  opacity: 0.6;
 }
 
+/* 텍스트 흐리게 */
 .product-card.sold h4,
 .product-card.sold p {
-  color: white !important;
+  color: #999 !important;
+}
+
+/* 판매 완료 텍스트만 강조 */
+.product-card.sold .sold-text {
+  color: #ff7043;
   font-weight: bold;
 }
 
