@@ -23,7 +23,8 @@ document.getElementById("add-product-btn").addEventListener("click", async () =>
     });
 
     alert("상품 등록 완료!");
-    window.showProductListScreen();
+    // ★ 상품 목록 자동 이동 제거
+    window.showMainScreen();  // 등록 후 메인 화면으로 돌아가도록 변경
   } catch (e) {
     console.error("상품 등록 실패:", e);
     alert("상품 등록 실패: " + e.message);
