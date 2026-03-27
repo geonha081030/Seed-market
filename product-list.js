@@ -1,6 +1,7 @@
 import { db } from './firebase-config.js';
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
+// 상품 목록 화면에서만 호출
 window.showProducts = async () => {
   const listDiv = document.getElementById("product-list");
   listDiv.innerHTML = "";
@@ -21,7 +22,7 @@ window.showProducts = async () => {
       listDiv.appendChild(itemDiv);
     });
   } catch (e) {
-    console.error(e);
+    console.error("상품 불러오기 실패:", e);
     listDiv.innerHTML = "상품을 불러오는 중 오류 발생";
   }
 };
