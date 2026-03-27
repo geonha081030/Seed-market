@@ -31,6 +31,7 @@
     <button id="logout-btn">로그아웃</button>
     <button id="go-add-btn">상품 등록</button>
     <button id="go-list-btn">상품 목록</button>
+    <button id="go-mypage-btn">마이페이지</button>
   </div>
 
   <!-- 상품 등록 -->
@@ -46,6 +47,7 @@
   <!-- 상품 목록 -->
   <div id="product-list-screen" style="display:none;">
     <h3>상품 목록</h3>
+    <input id="product-search" placeholder="검색">
     <div id="product-list"></div>
     <button id="back-main-from-list-btn">메인으로</button>
   </div>
@@ -58,11 +60,23 @@
     <button id="back-main-from-detail-btn">메인으로</button>
   </div>
 
+  <!-- 마이페이지 -->
+  <div id="mypage-screen" style="display:none;">
+    <h3>마이페이지</h3>
+    <p id="my-email"></p>
+
+    <h4>내 상품</h4>
+    <div id="my-products"></div>
+
+    <button id="back-main-from-mypage-btn">메인으로</button>
+  </div>
+
   <script type="module" src="firebase-config.js"></script>
   <script type="module" src="auth.js"></script>
   <script type="module" src="product.js"></script>
   <script type="module" src="product-list.js"></script>
   <script type="module" src="product-detail.js"></script>
+  <script type="module" src="mypage.js"></script>
 
 </body>
 </html>
