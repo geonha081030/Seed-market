@@ -14,28 +14,34 @@ window.showLoginScreen = () => {
   document.getElementById("main-screen").style.display = "none";
   document.getElementById("product-add-screen").style.display = "none";
   document.getElementById("product-list-screen").style.display = "none";
-};
+}
 
 window.showSignupScreen = () => {
   document.getElementById("login-screen").style.display = "none";
   document.getElementById("signup-screen").style.display = "block";
-};
+  document.getElementById("main-screen").style.display = "none";
+  document.getElementById("product-add-screen").style.display = "none";
+  document.getElementById("product-list-screen").style.display = "none";
+}
 
 window.showMainScreen = () => {
   document.getElementById("main-screen").style.display = "block";
   document.getElementById("login-screen").style.display = "none";
-};
+  document.getElementById("signup-screen").style.display = "none";
+  document.getElementById("product-add-screen").style.display = "none";
+  document.getElementById("product-list-screen").style.display = "none";
+}
 
 window.showAddProductScreen = () => {
   document.getElementById("main-screen").style.display = "none";
   document.getElementById("product-add-screen").style.display = "block";
-};
+}
 
 window.showProductListScreen = () => {
   document.getElementById("main-screen").style.display = "none";
   document.getElementById("product-list-screen").style.display = "block";
-  if (window.showProducts) window.showProducts();
-};
+  if(window.showProducts) window.showProducts(); // 목록 화면에서만 호출
+}
 
 // 회원가입
 document.getElementById("signup-btn").addEventListener("click", async () => {
@@ -46,7 +52,7 @@ document.getElementById("signup-btn").addEventListener("click", async () => {
     await sendEmailVerification(userCredential.user);
     alert("회원가입 완료! 이메일 인증 후 로그인하세요.");
     window.showLoginScreen();
-  } catch (e) {
+  } catch(e) {
     alert("회원가입 오류: " + e.message);
   }
 });
@@ -57,20 +63,20 @@ document.getElementById("login-btn").addEventListener("click", async () => {
   const password = document.getElementById("login-password").value;
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    if (!userCredential.user.emailVerified) {
+    if(!userCredential.user.emailVerified){
       alert("이메일 인증이 완료되지 않았습니다.");
       await signOut(auth);
       return;
     }
     window.showMainScreen();
-  } catch (e) {
+  } catch(e) {
     alert("로그인 실패: " + e.message);
   }
 });
 
-// 자동 로그인 감시
+// 자동 로그인
 onAuthStateChanged(auth, user => {
-  if (user && user.emailVerified) {
+  if(user && user.emailVerified){
     window.showMainScreen();
   } else {
     window.showLoginScreen();
@@ -82,7 +88,7 @@ document.getElementById("logout-btn").addEventListener("click", async () => {
   try {
     await signOut(auth);
     window.showLoginScreen();
-  } catch (e) {
+  } catch(e){
     alert("로그아웃 실패: " + e.message);
   }
 });
