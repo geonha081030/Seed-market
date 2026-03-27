@@ -40,7 +40,7 @@ window.showAddProductScreen = () => {
 window.showProductListScreen = () => {
   document.getElementById("main-screen").style.display = "none";
   document.getElementById("product-list-screen").style.display = "block";
-  if(window.showProducts) window.showProducts(); // 목록 화면에서만 호출
+  if(window.showProducts) window.showProducts(); 
 }
 
 // 회원가입
