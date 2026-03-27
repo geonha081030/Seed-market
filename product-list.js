@@ -15,13 +15,13 @@ window.showProducts = async () => {
     const product = docSnap.data();
 
     // 검색 필터
-    if(searchInput && !product.title.toLowerCase().includes(searchInput)) return;
+    if (searchInput && !product.title.toLowerCase().includes(searchInput)) return;
 
     const productDiv = document.createElement("div");
     productDiv.classList.add("product-card");
 
-    // 🔥 판매 완료면 sold 클래스 추가 (핵심)
-    if(product.sold){
+    // 🔥 판매 완료면 스타일 적용
+    if (product.sold) {
       productDiv.classList.add("sold");
     }
 
@@ -56,11 +56,15 @@ window.markAsSold = async (productId) => {
   try {
     const { doc, updateDoc } = await import("https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js");
     const productRef = doc(db, "products", productId);
+
     await updateDoc(productRef, { sold: true });
 
-    if(window.showProducts) window.showProducts();
     alert("판매 완료 처리되었습니다.");
-  } catch(e) {
+
+    // 목록 다시 불러오기
+    if (window.showProducts) window.showProducts();
+
+  } catch (e) {
     console.error(e);
     alert("판매 완료 처리 실패: " + e.message);
   }
