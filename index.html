@@ -13,7 +13,7 @@
     <input id="login-email" placeholder="이메일">
     <input id="login-password" type="password" placeholder="비밀번호">
     <button id="login-btn">로그인</button>
-    <button id="show-signup-btn">회원가입</button>
+    <button onclick="showSignupScreen()">회원가입</button>
   </div>
 
   <!-- 회원가입 -->
@@ -22,26 +22,36 @@
     <input id="signup-email" placeholder="이메일">
     <input id="signup-password" type="password" placeholder="비밀번호">
     <button id="signup-btn">회원가입</button>
-    <button id="back-to-login-btn">로그인 화면으로</button>
+    <button onclick="showLoginScreen()">로그인 화면으로</button>
   </div>
 
   <!-- 메인 -->
   <div id="main-screen" style="display:none;">
     <h2>Seed Market</h2>
     <button id="logout-btn">로그아웃</button>
-    <button id="go-add-btn">상품 등록</button>
-    <button id="go-list-btn">상품 목록</button>
-    <button id="go-mypage-btn">마이페이지</button>
+    <button onclick="showAddProductScreen()">상품 등록</button>
+    <button onclick="showProductListScreen()">상품 목록</button>
+    <button onclick="showMyPage()">마이페이지</button>
   </div>
 
   <!-- 상품 목록 -->
   <div id="product-list-screen" style="display:none;">
     <h3>상품 목록</h3>
     <div id="product-list"></div>
-    <button id="back-main-from-list-btn">메인으로</button>
+    <button onclick="showMainScreen()">메인으로</button>
   </div>
 
-  <!-- 상품 상세 -->
+  <!-- 상품 등록 -->
+  <div id="product-add-screen" style="display:none;">
+    <h3>상품 등록</h3>
+    <input id="product-title" placeholder="상품명">
+    <input id="product-price" type="number" placeholder="가격">
+    <textarea id="product-desc" placeholder="설명"></textarea>
+    <button id="add-product-btn">등록</button>
+    <button onclick="showMainScreen()">메인으로</button>
+  </div>
+
+  <!-- 상세 + 채팅 -->
   <div id="product-detail-screen" style="display:none;">
     <h3 id="detail-title"></h3>
     <p id="detail-price"></p>
@@ -53,14 +63,16 @@
     <input id="chat-input" placeholder="메시지 입력">
     <button onclick="sendMessage()">전송</button>
 
-    <button id="back-main-from-detail-btn">메인으로</button>
+    <button onclick="showMainScreen()">메인으로</button>
   </div>
 
   <!-- JS -->
   <script type="module" src="firebase-config.js"></script>
   <script type="module" src="auth.js"></script>
+  <script type="module" src="product.js"></script>
   <script type="module" src="product-list.js"></script>
   <script type="module" src="product-detail.js"></script>
+  <script type="module" src="mypage.js"></script>
 
 </body>
 </html>
