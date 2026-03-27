@@ -39,13 +39,36 @@ window.loadMyPage = async () => {
 
     if (product.sold) div.classList.add("sold");
 
+    // 내용
     div.innerHTML = `
       <h4>${product.title}</h4>
       <p>${product.price}원</p>
+      <p>${product.description || ""}</p>
       ${product.sold ? `<p class="sold-text">판매 완료</p>` : ""}
     `;
 
-    // 판매완료 버튼
+    // 🔥 수정 버튼
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "수정";
+    editBtn.style.backgroundColor = "#4CAF50";
+    editBtn.style.color = "white";
+
+    editBtn.onclick = () => {
+      const newTitle = prompt("새 상품명", product.title);
+      const newPrice = prompt("새 가격", product.price);
+      const newDesc = prompt("새 설명", product.description || "");
+
+      if (!newTitle || !newPrice) {
+        alert("상품명과 가격은 필수입니다.");
+        return;
+      }
+
+      updateProduct(docSnap.id, newTitle, newPrice, newDesc);
+    };
+
+    div.appendChild(editBtn);
+
+    // 🔥 판매완료 버튼
     if (!product.sold) {
       const soldBtn = document.createElement("button");
       soldBtn.textContent = "판매 완료";
@@ -80,6 +103,31 @@ window.loadMyPage = async () => {
 
     listDiv.appendChild(div);
   });
+};
+
+// 🔥 상품 수정 함수
+window.updateProduct = async (productId, title, price, desc) => {
+  try {
+    const { doc, updateDoc } = await import(
+      "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js"
+    );
+
+    const productRef = doc(db, "products", productId);
+
+    await updateDoc(productRef, {
+      title: title,
+      price: Number(price),
+      description: desc
+    });
+
+    alert("수정 완료!");
+
+    window.loadMyPage();
+    if (window.showProducts) window.showProducts();
+
+  } catch (e) {
+    alert("수정 실패: " + e.message);
+  }
 };
 
 // 판매완료 처리
