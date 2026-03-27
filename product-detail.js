@@ -2,26 +2,24 @@ import { db, auth } from './firebase-config.js';
 import { doc, getDoc, collection, addDoc, query, orderBy, onSnapshot } 
 from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-console.log("detail js 로드됨");
+window.currentChatRef = null;
 
+// 상세페이지
 window.showProductDetailScreen = async (productId) => {
 
-  document.getElementById("main-screen").style.display = "none";
   document.getElementById("product-list-screen").style.display = "none";
   document.getElementById("product-detail-screen").style.display = "block";
 
   const productRef = doc(db, "products", productId);
   const snap = await getDoc(productRef);
-
   const product = snap.data();
 
   document.getElementById("detail-title").textContent = product.title;
   document.getElementById("detail-price").textContent = product.price + "원";
   document.getElementById("detail-desc").textContent = product.description || "";
 
-  // 🔥 로그인 체크
   if (!auth.currentUser) {
-    alert("로그인 안됨");
+    alert("로그인 필요");
     return;
   }
 
@@ -30,15 +28,14 @@ window.showProductDetailScreen = async (productId) => {
 
   const chatId = [myEmail, sellerEmail].sort().join("_");
 
-  console.log("채팅방 ID:", chatId);
-
-  const chatRef = collection(productRef, "chats", chatId, "messages");
+  // 🔥 전역 저장
+  window.currentChatRef = collection(productRef, "chats", chatId, "messages");
 
   const chatList = document.getElementById("chat-list");
   chatList.innerHTML = "";
 
-  // 채팅 불러오기
-  const q = query(chatRef, orderBy("createdAt"));
+  const q = query(window.currentChatRef, orderBy("createdAt"));
+
   onSnapshot(q, snapshot => {
     chatList.innerHTML = "";
 
@@ -46,44 +43,48 @@ window.showProductDetailScreen = async (productId) => {
       const msg = docSnap.data();
       const div = document.createElement("div");
 
-      div.textContent = `${msg.sender}: ${msg.text}`;
+      div.textContent = msg.sender + ": " + msg.text;
       chatList.appendChild(div);
     });
   });
+};
 
-  // 🔥 버튼 다시 바인딩 (중요)
-  const sendBtn = document.getElementById("chat-send-btn");
+// 🔥 전송 함수 (HTML에서 직접 호출)
+window.sendMessage = async () => {
+
+  console.log("전송 버튼 클릭됨");
+
   const input = document.getElementById("chat-input");
+  const text = input.value.trim();
 
-  sendBtn.onclick = async () => {
-    console.log("전송 버튼 클릭됨");
+  if (!text) {
+    alert("내용 없음");
+    return;
+  }
 
-    const text = input.value.trim();
+  if (!window.currentChatRef) {
+    alert("채팅 연결 안됨");
+    return;
+  }
 
-    if (!text) {
-      alert("내용 없음");
-      return;
-    }
+  try {
+    await addDoc(window.currentChatRef, {
+      sender: auth.currentUser.email,
+      text: text,
+      createdAt: new Date()
+    });
 
-    try {
-      await addDoc(chatRef, {
-        sender: myEmail,
-        text: text,
-        createdAt: new Date()
-      });
+    console.log("전송 성공");
+    input.value = "";
 
-      console.log("전송 성공");
-      input.value = "";
-
-    } catch (e) {
-      console.error("전송 실패:", e);
-      alert("전송 실패: " + e.message);
-    }
-  };
+  } catch (e) {
+    console.error(e);
+    alert("전송 실패: " + e.message);
+  }
 };
 
 // 뒤로가기
 document.getElementById("back-main-from-detail-btn").addEventListener("click", () => {
   document.getElementById("product-detail-screen").style.display = "none";
-  window.showMainScreen();
+  document.getElementById("product-list-screen").style.display = "block";
 });
