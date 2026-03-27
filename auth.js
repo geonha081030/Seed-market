@@ -1,4 +1,3 @@
-// auth.js
 import { auth } from './firebase-config.js';
 import { 
   createUserWithEmailAndPassword,
@@ -8,36 +7,35 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
-// 화면 전환
-window.showLoginScreen = function() {
+// 화면 전환 함수
+window.showLoginScreen = () => {
   document.getElementById("login-screen").style.display = "block";
   document.getElementById("signup-screen").style.display = "none";
   document.getElementById("main-screen").style.display = "none";
   document.getElementById("product-add-screen").style.display = "none";
   document.getElementById("product-list-screen").style.display = "none";
-}
+};
 
-window.showSignupScreen = function() {
+window.showSignupScreen = () => {
   document.getElementById("login-screen").style.display = "none";
   document.getElementById("signup-screen").style.display = "block";
-}
+};
 
-window.showMainScreen = function() {
+window.showMainScreen = () => {
   document.getElementById("main-screen").style.display = "block";
   document.getElementById("login-screen").style.display = "none";
-  document.getElementById("signup-screen").style.display = "none";
-}
+};
 
-window.showAddProductScreen = function() {
+window.showAddProductScreen = () => {
   document.getElementById("main-screen").style.display = "none";
   document.getElementById("product-add-screen").style.display = "block";
-}
+};
 
-window.showProductListScreen = function() {
+window.showProductListScreen = () => {
   document.getElementById("main-screen").style.display = "none";
   document.getElementById("product-list-screen").style.display = "block";
-  if(window.showProducts) window.showProducts();
-}
+  if (window.showProducts) window.showProducts();
+};
 
 // 회원가입
 document.getElementById("signup-btn").addEventListener("click", async () => {
@@ -48,7 +46,7 @@ document.getElementById("signup-btn").addEventListener("click", async () => {
     await sendEmailVerification(userCredential.user);
     alert("회원가입 완료! 이메일 인증 후 로그인하세요.");
     window.showLoginScreen();
-  } catch(e) {
+  } catch (e) {
     alert("회원가입 오류: " + e.message);
   }
 });
@@ -59,21 +57,20 @@ document.getElementById("login-btn").addEventListener("click", async () => {
   const password = document.getElementById("login-password").value;
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    if(!userCredential.user.emailVerified){
+    if (!userCredential.user.emailVerified) {
       alert("이메일 인증이 완료되지 않았습니다.");
       await signOut(auth);
       return;
     }
-    alert("로그인 성공!");
     window.showMainScreen();
-  } catch(e) {
+  } catch (e) {
     alert("로그인 실패: " + e.message);
   }
 });
 
 // 자동 로그인 감시
 onAuthStateChanged(auth, user => {
-  if(user && user.emailVerified){
+  if (user && user.emailVerified) {
     window.showMainScreen();
   } else {
     window.showLoginScreen();
@@ -84,9 +81,8 @@ onAuthStateChanged(auth, user => {
 document.getElementById("logout-btn").addEventListener("click", async () => {
   try {
     await signOut(auth);
-    alert("로그아웃되었습니다.");
     window.showLoginScreen();
-  } catch(e){
+  } catch (e) {
     alert("로그아웃 실패: " + e.message);
   }
 });
