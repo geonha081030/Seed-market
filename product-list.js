@@ -1,6 +1,6 @@
 import { db, auth } from './firebase-config.js';
 import { collection, getDocs, query, orderBy } 
-  from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 window.showProducts = async () => {
   const listDiv = document.getElementById("product-list");
@@ -14,39 +14,65 @@ window.showProducts = async () => {
   querySnapshot.forEach(docSnap => {
     const product = docSnap.data();
 
-    // 검색 필터
     if (searchInput && !product.title.toLowerCase().includes(searchInput)) return;
 
+    // 카드 생성
     const productDiv = document.createElement("div");
-    productDiv.classList.add("product-card");
+    productDiv.className = "product-card";
 
-    // 🔥 판매 완료면 흐리게 처리
+    // 🔥 판매 완료면 흐리게
     if (product.sold) {
       productDiv.classList.add("sold");
     }
 
-    productDiv.innerHTML = `
-      <h4>${product.title}</h4>
-      <p>가격: ${product.price}원</p>
-      <p>${product.description || ""}</p>
-      <p>등록일: ${product.createdAt ? product.createdAt.toDate().toLocaleString() : ""}</p>
+    // 제목
+    const title = document.createElement("h4");
+    title.textContent = product.title;
 
-      ${product.sold ? `<p class="sold-text">판매 완료</p>` : ""}
+    // 가격
+    const price = document.createElement("p");
+    price.textContent = `가격: ${product.price}원`;
 
-      ${
-        product.sellerEmail === auth.currentUser.email && !product.sold 
-        ? `<button class="sold-btn" onclick="markAsSold('${docSnap.id}')">판매 완료</button>` 
-        : ""
-      }
+    // 설명
+    const desc = document.createElement("p");
+    desc.textContent = product.description || "";
 
-      <hr>
-    `;
+    // 날짜
+    const date = document.createElement("p");
+    date.textContent = product.createdAt 
+      ? "등록일: " + product.createdAt.toDate().toLocaleString() 
+      : "";
+
+    productDiv.appendChild(title);
+    productDiv.appendChild(price);
+    productDiv.appendChild(desc);
+    productDiv.appendChild(date);
+
+    // 판매 완료 텍스트
+    if (product.sold) {
+      const soldText = document.createElement("p");
+      soldText.textContent = "판매 완료";
+      soldText.className = "sold-text";
+      productDiv.appendChild(soldText);
+    }
+
+    // 🔥 판매 완료 버튼 (핵심)
+    if (product.sellerEmail === auth.currentUser.email && !product.sold) {
+      const btn = document.createElement("button");
+      btn.textContent = "판매 완료";
+      btn.className = "sold-btn";
+      btn.onclick = () => markAsSold(docSnap.id);
+      productDiv.appendChild(btn);
+    }
+
+    const hr = document.createElement("hr");
+    productDiv.appendChild(hr);
 
     listDiv.appendChild(productDiv);
   });
 };
 
-// 검색 이벤트
+// 검색
 document.getElementById("product-search").addEventListener("input", () => {
   window.showProducts();
 });
@@ -60,11 +86,9 @@ window.markAsSold = async (productId) => {
     await updateDoc(productRef, { sold: true });
 
     alert("판매 완료 처리되었습니다.");
-
-    if (window.showProducts) window.showProducts();
+    window.showProducts();
 
   } catch (e) {
-    console.error(e);
-    alert("판매 완료 처리 실패: " + e.message);
+    alert("오류: " + e.message);
   }
 };
