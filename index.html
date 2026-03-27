@@ -4,10 +4,6 @@
   <meta charset="UTF-8">
   <title>Seed Market</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    .product-card { border:1px solid #ccc; padding:10px; margin-bottom:10px; cursor:pointer; }
-    #chat-list { max-height:200px; overflow-y:auto; border:1px solid #ccc; padding:5px; margin-bottom:5px; }
-  </style>
 </head>
 <body>
   <!-- 로그인 화면 -->
@@ -33,7 +29,6 @@
     <h2>Seed Market</h2>
     <button id="logout-btn">로그아웃</button>
     <button id="go-add-btn">상품 등록</button>
-    <input id="product-search-input" placeholder="검색" style="margin-left:10px;">
     <button id="go-list-btn">상품 목록</button>
   </div>
 
@@ -54,24 +49,9 @@
     <button id="back-main-from-list-btn">메인 화면으로</button>
   </div>
 
-  <!-- 상품 상세 + 채팅 화면 -->
-  <div id="product-detail-screen" style="display:none;">
-    <h3 id="detail-title"></h3>
-    <div id="detail-price"></div>
-    <div id="detail-desc"></div>
-    <div id="detail-sold" style="font-weight:bold;"></div>
-    <button id="detail-sold-btn" style="display:none;">판매 완료 처리</button>
-    <h4>채팅</h4>
-    <div id="chat-list"></div>
-    <input id="chat-input" placeholder="메시지 입력">
-    <button id="chat-send-btn">전송</button>
-    <button id="back-main-from-detail-btn">메인 화면으로</button>
-  </div>
-
   <script type="module" src="firebase-config.js"></script>
   <script type="module" src="auth.js"></script>
   <script type="module" src="product.js"></script>
   <script type="module" src="product-list.js"></script>
-  <script type="module" src="product-detail.js"></script>
 </body>
 </html>
