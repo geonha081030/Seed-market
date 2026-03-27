@@ -1,4 +1,3 @@
-// product.js
 import { db, storage, auth } from './firebase-config.js';
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-storage.js";
@@ -22,10 +21,10 @@ document.getElementById("add-product-btn").addEventListener("click", async () =>
       imageUrl = await getDownloadURL(snapshot.ref);
     }
 
-    const docRef = await addDoc(collection(db, "products"), {
+    await addDoc(collection(db, "products"), {
       title,
       price: Number(price),
-      description: desc || "",
+      description: desc,
       imageUrl,
       sellerEmail: auth.currentUser.email
     });
@@ -33,7 +32,7 @@ document.getElementById("add-product-btn").addEventListener("click", async () =>
     alert("상품 등록 완료!");
     window.showProductListScreen();
   } catch (e) {
-    alert("상품 등록 실패: " + e.message);
     console.error(e);
+    alert("상품 등록 실패: " + e.message);
   }
 });
