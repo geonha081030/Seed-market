@@ -7,134 +7,103 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
-// ==============================
-// 화면 전환
-// ==============================
-
+// 🔥 화면 전환 함수들
 window.showLoginScreen = () => {
+  hideAll();
   document.getElementById("login-screen").style.display = "block";
-  document.getElementById("signup-screen").style.display = "none";
-  document.getElementById("main-screen").style.display = "none";
-  document.getElementById("product-add-screen").style.display = "none";
-  document.getElementById("product-list-screen").style.display = "none";
-  document.getElementById("mypage-screen").style.display = "none";
 };
 
 window.showSignupScreen = () => {
-  document.getElementById("login-screen").style.display = "none";
+  hideAll();
   document.getElementById("signup-screen").style.display = "block";
-  document.getElementById("main-screen").style.display = "none";
-  document.getElementById("product-add-screen").style.display = "none";
-  document.getElementById("product-list-screen").style.display = "none";
-  document.getElementById("mypage-screen").style.display = "none";
 };
 
 window.showMainScreen = () => {
+  hideAll();
   document.getElementById("main-screen").style.display = "block";
-  document.getElementById("login-screen").style.display = "none";
-  document.getElementById("signup-screen").style.display = "none";
-  document.getElementById("product-add-screen").style.display = "none";
-  document.getElementById("product-list-screen").style.display = "none";
-  document.getElementById("mypage-screen").style.display = "none";
 };
 
 window.showAddProductScreen = () => {
-  document.getElementById("main-screen").style.display = "none";
+  hideAll();
   document.getElementById("product-add-screen").style.display = "block";
 };
 
 window.showProductListScreen = () => {
-  document.getElementById("main-screen").style.display = "none";
+  hideAll();
   document.getElementById("product-list-screen").style.display = "block";
-  if(window.showProducts) window.showProducts();
+
+  if (window.showProducts) window.showProducts();
 };
 
-// 🔥 마이페이지 화면
-window.showMyPageScreen = () => {
-  document.getElementById("main-screen").style.display = "none";
+window.showMyPage = () => {
+  hideAll();
   document.getElementById("mypage-screen").style.display = "block";
-
-  if(window.loadMyPage) window.loadMyPage();
 };
 
-// ==============================
-// 회원가입
-// ==============================
+// 🔥 전부 숨기기
+function hideAll() {
+  const screens = [
+    "login-screen",
+    "signup-screen",
+    "main-screen",
+    "product-add-screen",
+    "product-list-screen",
+    "product-detail-screen",
+    "mypage-screen"
+  ];
 
+  screens.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = "none";
+  });
+}
+
+// 회원가입
 document.getElementById("signup-btn").addEventListener("click", async () => {
   const email = document.getElementById("signup-email").value;
   const password = document.getElementById("signup-password").value;
 
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    await sendEmailVerification(userCredential.user);
-
-    alert("회원가입 완료! 이메일 인증 후 로그인하세요.");
-    window.showLoginScreen();
-
+    const user = await createUserWithEmailAndPassword(auth, email, password);
+    await sendEmailVerification(user.user);
+    alert("회원가입 완료! 로그인하세요");
+    showLoginScreen();
   } catch (e) {
-    alert("회원가입 오류: " + e.message);
+    alert(e.message);
   }
 });
 
-// ==============================
 // 로그인
-// ==============================
-
 document.getElementById("login-btn").addEventListener("click", async () => {
   const email = document.getElementById("login-email").value;
   const password = document.getElementById("login-password").value;
 
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = await signInWithEmailAndPassword(auth, email, password);
 
-    if (!userCredential.user.emailVerified) {
-      alert("이메일 인증이 완료되지 않았습니다.");
+    if (!user.user.emailVerified) {
+      alert("이메일 인증 필요");
       await signOut(auth);
       return;
     }
 
-    window.showMainScreen();
-
+    showMainScreen();
   } catch (e) {
-    alert("로그인 실패: " + e.message);
+    alert("로그인 실패");
   }
 });
 
-// ==============================
 // 자동 로그인
-// ==============================
-
 onAuthStateChanged(auth, user => {
   if (user && user.emailVerified) {
-    window.showMainScreen();
+    showMainScreen();
   } else {
-    window.showLoginScreen();
+    showLoginScreen();
   }
 });
 
-// ==============================
 // 로그아웃
-// ==============================
-
 document.getElementById("logout-btn").addEventListener("click", async () => {
-  try {
-    await signOut(auth);
-    window.showLoginScreen();
-  } catch (e) {
-    alert("로그아웃 실패: " + e.message);
-  }
+  await signOut(auth);
+  showLoginScreen();
 });
-
-// ==============================
-// 버튼 이벤트
-// ==============================
-
-document.getElementById("show-signup-btn").addEventListener("click", () => window.showSignupScreen());
-document.getElementById("back-to-login-btn").addEventListener("click", () => window.showLoginScreen());
-document.getElementById("go-add-btn").addEventListener("click", () => window.showAddProductScreen());
-document.getElementById("go-list-btn").addEventListener("click", () => window.showProductListScreen());
-document.getElementById("go-mypage-btn").addEventListener("click", () => window.showMyPageScreen());
-document.getElementById("back-main-btn").addEventListener("click", () => window.showMainScreen());
-document.getElementById("back-main-from-list-btn").addEventListener("click", () => window.showMainScreen());
-document.getElementById("back-main-from-mypage-btn").addEventListener("click", () => window.showMainScreen());
