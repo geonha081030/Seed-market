@@ -1,103 +1,92 @@
 /* ==============================
-   전체 페이지 기본
+   전체 페이지
 ============================== */
 body {
   font-family: 'Noto Sans KR', sans-serif;
-  background-color: #f0f2f5;
-  color: #333;
+  background-color: #fff7f8; /* 부드러운 핑크 파스텔 */
   margin: 0;
   padding: 20px;
+  color: #333;
 }
 
-/* 중앙 정렬 */
-body > div {
-  max-width: 650px;
+/* 화면 컨테이너 */
+#login-screen, #signup-screen, #main-screen, 
+#product-add-screen, #product-list-screen {
+  max-width: 700px;
   margin: auto;
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  padding: 25px;
+  background-color: #fefefe;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
 }
 
 /* ==============================
    제목
 ============================== */
 h2, h3 {
-  color: #2c3e50;
   text-align: center;
+  color: #6d4c41; /* 진한 갈색 */
 }
 
 /* ==============================
-   입력칸 & 텍스트 영역
+   입력칸
 ============================== */
 input, textarea {
   display: block;
   width: 100%;
-  max-width: 100%;
-  padding: 12px 15px;
+  padding: 14px 18px;
   margin: 10px 0;
   font-size: 16px;
-  border: 2px solid #ccc;
-  border-radius: 8px;
+  border: 2px solid #cfd8dc; /* 연한 회색 */
+  border-radius: 12px;
   box-sizing: border-box;
-  transition: 0.3s;
+  transition: all 0.3s;
+  background-color: #fff8e1; /* 연한 노랑 파스텔 */
 }
 
 input:focus, textarea:focus {
-  border-color: #4CAF50;
+  border-color: #ffab91; /* 오렌지 파스텔 */
+  box-shadow: 0 0 8px rgba(255, 171, 145, 0.5);
   outline: none;
-  box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
 }
 
 textarea {
+  min-height: 100px;
   resize: vertical;
-  min-height: 80px;
 }
 
 /* ==============================
    버튼
 ============================== */
 button {
-  padding: 12px 20px;
+  padding: 14px 25px;
   font-size: 16px;
-  border-radius: 8px;
+  border-radius: 12px;
   border: none;
   cursor: pointer;
   margin: 8px 0;
   transition: 0.3s;
+  color: #fff;
 }
 
-/* 기본 버튼 색상 */
-button#login-btn,
-button#signup-btn,
-button#go-add-btn,
-button#go-list-btn,
-button#logout-btn,
-button#add-product-btn,
-button#back-main-btn,
-button#back-main-from-list-btn {
-  background-color: #4CAF50;
-  color: white;
+/* 주요 버튼 색상 - 파스텔 톤 */
+#login-btn, #signup-btn, #go-add-btn, #go-list-btn, 
+#logout-btn, #add-product-btn, #back-main-btn, #back-main-from-list-btn {
+  background-color: #ffccbc; /* 연한 오렌지 */
 }
 
-button#login-btn:hover,
-button#signup-btn:hover,
-button#go-add-btn:hover,
-button#go-list-btn:hover,
-button#logout-btn:hover,
-button#add-product-btn:hover,
-button#back-main-btn:hover,
-button#back-main-from-list-btn:hover {
-  background-color: #45a049;
+#login-btn:hover, #signup-btn:hover, #go-add-btn:hover, #go-list-btn:hover,
+#logout-btn:hover, #add-product-btn:hover, #back-main-btn:hover, #back-main-from-list-btn:hover {
+  background-color: #ffab91; /* 살짝 진해짐 */
 }
 
 /* 판매 완료 버튼 */
 button.sold-btn {
-  background-color: #ff4d4f;
+  background-color: #f48fb1; /* 핑크 파스텔 */
 }
 
 button.sold-btn:hover {
-  background-color: #e03e3e;
+  background-color: #f06292;
 }
 
 /* ==============================
@@ -105,45 +94,45 @@ button.sold-btn:hover {
 ============================== */
 .product-card {
   border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 15px;
-  margin-bottom: 15px;
-  background-color: #fafafa;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  transition: 0.2s;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background-color: #e1f5fe; /* 하늘색 파스텔 */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .product-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
 
-/* 판매 완료 표시 */
+/* 판매 완료 상품 */
 .product-card.sold {
-  background-color: #ffe6e6;
+  background-color: #ffe0b2; /* 노랑 파스텔 */
   opacity: 0.8;
 }
 
 .product-card.sold p {
-  color: #a94442;
+  color: #d84315; /* 진한 오렌지 */
   font-weight: bold;
 }
 
 /* 상품 제목 */
 .product-card h4 {
   margin: 0 0 8px 0;
-  color: #2c3e50;
+  color: #37474f; /* 짙은 청록 */
 }
 
 /* 가격, 설명 */
 .product-card p {
-  margin: 5px 0;
-  font-size: 14px;
+  margin: 4px 0;
+  font-size: 15px;
 }
 
 /* 구분선 */
 .product-card hr {
-  border: 0.5px solid #ddd;
+  border: 0.5px solid #cfd8dc;
   margin: 10px 0;
 }
 
@@ -151,50 +140,61 @@ button.sold-btn:hover {
    검색창
 ============================== */
 #product-search {
-  margin-bottom: 15px;
-  padding: 10px 12px;
-  font-size: 15px;
-  border: 2px solid #ccc;
-  border-radius: 8px;
   width: 100%;
+  padding: 12px 16px;
+  font-size: 15px;
+  border-radius: 12px;
+  border: 2px solid #cfd8dc;
+  margin-bottom: 18px;
   box-sizing: border-box;
+  transition: 0.3s;
+  background-color: #dcedc8; /* 연한 연두 */
 }
 
 #product-search:focus {
-  border-color: #4CAF50;
-  box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+  border-color: #aed581;
+  box-shadow: 0 0 6px rgba(174, 213, 129, 0.5);
 }
 
 /* ==============================
-   채팅창 (product-detail)
+   채팅창 (상품 상세)
 ============================== */
 #chat-list {
   border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 10px;
+  border-radius: 12px;
+  padding: 12px;
   max-height: 250px;
   overflow-y: auto;
-  background-color: #fefefe;
-  margin-bottom: 10px;
+  background-color: #fff9c4; /* 연한 노랑 */
+  margin-bottom: 12px;
 }
 
 #chat-input {
   width: calc(100% - 90px);
-  display: inline-block;
+  padding: 12px;
+  font-size: 15px;
+  border-radius: 10px;
+  border: 2px solid #cfd8dc;
+  background-color: #f0f4c3; /* 연한 연두 */
 }
 
 #chat-send-btn {
-  width: 70px;
-  display: inline-block;
-  margin-left: 10px;
+  width: 80px;
+  padding: 12px;
+  margin-left: 8px;
+  font-size: 15px;
+  border-radius: 10px;
+  background-color: #81d4fa; /* 연한 파랑 */
+  color: #fff;
+  cursor: pointer;
 }
 
 /* ==============================
    마이페이지 (예비)
 ============================== */
 #my-page {
-  padding: 15px;
-  background-color: #f7f9fc;
-  border-radius: 10px;
+  padding: 18px;
+  background-color: #f8bbd0; /* 연한 핑크 */
+  border-radius: 16px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
