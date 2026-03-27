@@ -17,6 +17,7 @@ window.showLoginScreen = () => {
   document.getElementById("main-screen").style.display = "none";
   document.getElementById("product-add-screen").style.display = "none";
   document.getElementById("product-list-screen").style.display = "none";
+  document.getElementById("mypage-screen").style.display = "none";
 };
 
 window.showSignupScreen = () => {
@@ -25,6 +26,7 @@ window.showSignupScreen = () => {
   document.getElementById("main-screen").style.display = "none";
   document.getElementById("product-add-screen").style.display = "none";
   document.getElementById("product-list-screen").style.display = "none";
+  document.getElementById("mypage-screen").style.display = "none";
 };
 
 window.showMainScreen = () => {
@@ -33,9 +35,7 @@ window.showMainScreen = () => {
   document.getElementById("signup-screen").style.display = "none";
   document.getElementById("product-add-screen").style.display = "none";
   document.getElementById("product-list-screen").style.display = "none";
-
-  // 🔥 마이페이지 로드 (핵심 추가)
-  if (window.loadMyPage) window.loadMyPage();
+  document.getElementById("mypage-screen").style.display = "none";
 };
 
 window.showAddProductScreen = () => {
@@ -46,8 +46,15 @@ window.showAddProductScreen = () => {
 window.showProductListScreen = () => {
   document.getElementById("main-screen").style.display = "none";
   document.getElementById("product-list-screen").style.display = "block";
+  if(window.showProducts) window.showProducts();
+};
 
-  if (window.showProducts) window.showProducts();
+// 🔥 마이페이지 화면
+window.showMyPageScreen = () => {
+  document.getElementById("main-screen").style.display = "none";
+  document.getElementById("mypage-screen").style.display = "block";
+
+  if(window.loadMyPage) window.loadMyPage();
 };
 
 // ==============================
@@ -127,5 +134,7 @@ document.getElementById("show-signup-btn").addEventListener("click", () => windo
 document.getElementById("back-to-login-btn").addEventListener("click", () => window.showLoginScreen());
 document.getElementById("go-add-btn").addEventListener("click", () => window.showAddProductScreen());
 document.getElementById("go-list-btn").addEventListener("click", () => window.showProductListScreen());
+document.getElementById("go-mypage-btn").addEventListener("click", () => window.showMyPageScreen());
 document.getElementById("back-main-btn").addEventListener("click", () => window.showMainScreen());
 document.getElementById("back-main-from-list-btn").addEventListener("click", () => window.showMainScreen());
+document.getElementById("back-main-from-mypage-btn").addEventListener("click", () => window.showMainScreen());
