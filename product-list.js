@@ -28,19 +28,20 @@ window.showProducts = async () => {
       ${product.sold ? `<p class="sold-text">판매 완료</p>` : ""}
     `;
 
-    // 🔥 카드 클릭 → 상세페이지 이동
+    // 🔥 무조건 작동 확인용 로그
     productDiv.onclick = () => {
+      console.log("클릭됨:", docSnap.id);
       window.showProductDetailScreen(docSnap.id);
     };
 
-    // 🔥 내 상품일 경우 판매완료 버튼
+    // 판매완료 버튼 (내 상품)
     if (product.sellerEmail === auth.currentUser.email && !product.sold) {
       const btn = document.createElement("button");
       btn.textContent = "판매 완료";
       btn.className = "sold-btn";
 
       btn.onclick = async (e) => {
-        e.stopPropagation(); // 🔥 클릭 막힘 방지
+        e.stopPropagation(); // 🔥 카드 클릭 막힘 방지
 
         const { doc, updateDoc } = await import(
           "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js"
@@ -55,14 +56,11 @@ window.showProducts = async () => {
       productDiv.appendChild(btn);
     }
 
-    const hr = document.createElement("hr");
-    productDiv.appendChild(hr);
-
     listDiv.appendChild(productDiv);
   });
 };
 
-// 검색
+// 검색 이벤트
 document.getElementById("product-search").addEventListener("input", () => {
   window.showProducts();
 });
