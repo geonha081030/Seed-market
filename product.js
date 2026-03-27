@@ -1,5 +1,6 @@
 import { db, auth } from './firebase-config.js';
-import { collection, addDoc, serverTimestamp, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+import { collection, addDoc, serverTimestamp, doc, updateDoc } 
+  from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 // 상품 등록
 document.getElementById("add-product-btn").addEventListener("click", async () => {
@@ -23,8 +24,7 @@ document.getElementById("add-product-btn").addEventListener("click", async () =>
     });
 
     alert("상품 등록 완료!");
-    // ★ 상품 목록 자동 이동 제거
-    window.showMainScreen();  // 등록 후 메인 화면으로 돌아가도록 변경
+    window.showMainScreen();  // 등록 후 메인 화면으로
   } catch (e) {
     console.error("상품 등록 실패:", e);
     alert("상품 등록 실패: " + e.message);
