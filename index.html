@@ -56,23 +56,29 @@
     <button id="back-main-from-detail-btn">메인으로</button>
   </div>
 
+  <div id="mypage-screen" style="display:none;">
+    <h3>마이페이지</h3>
+    <p id="my-email"></p>
+    <button id="go-chat-list-btn" style="background-color: #d6f5ff;">내 채팅 목록 보기</button>
+    <h4>내 상품 관리</h4>
+    <div id="my-products"></div>
+    <button id="back-main-from-mypage-btn">메인으로</button>
+  </div>
+
+  <div id="chat-list-screen" style="display:none;">
+    <h3>내 채팅 목록</h3>
+    <div id="chat-rooms-container"></div>
+    <button id="back-mypage-from-chatlist-btn">마이페이지로</button>
+  </div>
+
   <div id="chat-screen" style="display:none;">
     <h3 id="chat-title">채팅창</h3>
-    <div id="chat-messages" style="height: 350px; overflow-y: auto; background: #f4f4f4; border: 1px solid #ddd; margin: 10px; padding: 10px; display: flex; flex-direction: column;">
-      </div>
+    <div id="chat-messages" style="height: 350px; overflow-y: auto; background: #f4f4f4; border: 1px solid #ddd; margin: 10px; padding: 10px; display: flex; flex-direction: column;"></div>
     <div style="display: flex; gap: 5px; padding: 10px;">
       <input id="chat-input" placeholder="메시지를 입력하세요" style="flex: 1; margin: 0;">
       <button id="send-chat-btn" style="width: 80px; margin: 0; background-color: #ffd6e0;">전송</button>
     </div>
-    <button id="back-from-chat-btn">상세보기로</button>
-  </div>
-
-  <div id="mypage-screen" style="display:none;">
-    <h3>마이페이지</h3>
-    <p id="my-email"></p>
-    <h4>내 상품</h4>
-    <div id="my-products"></div>
-    <button id="back-main-from-mypage-btn">메인으로</button>
+    <button id="back-from-chat-btn">뒤로가기</button>
   </div>
 
   <script type="module" src="firebase-config.js"></script>
@@ -80,7 +86,8 @@
   <script type="module" src="product.js"></script>
   <script type="module" src="product-list.js"></script>
   <script type="module" src="product-detail.js"></script>
-  <script type="module" src="chat.js"></script> <script type="module" src="mypage.js"></script>
+  <script type="module" src="chat.js"></script>
+  <script type="module" src="mypage.js"></script>
 
 </body>
 </html>
