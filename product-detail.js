@@ -6,8 +6,7 @@ window.showProductDetailScreen = async (productId) => {
   screens.forEach(id => document.getElementById(id).style.display = "none");
   document.getElementById("product-detail-screen").style.display = "block";
 
-  const ref = doc(db, "products", productId);
-  const snap = await getDoc(ref);
+  const snap = await getDoc(doc(db, "products", productId));
   const product = snap.data();
 
   document.getElementById("detail-title").textContent = product.title;
@@ -21,13 +20,12 @@ window.showProductDetailScreen = async (productId) => {
     const chatBtn = document.createElement("button");
     chatBtn.textContent = "판매자와 채팅하기";
     chatBtn.onclick = () => {
-      const roomId = [auth.currentUser.uid, product.sellerUid].sort().join("_") + "_" + productId;
+      if(!product.sellerUid) return alert("판매자 정보가 없는 상품입니다. (새로 등록한 상품으로 테스트해보세요)");
+      
+      // 방 ID를 아주 단순하게 조합 (구매자UID_판매자UID_상품ID)
+      const roomId = `${auth.currentUser.uid}_${product.sellerUid}_${productId}`;
       window.openChat(roomId, product.title, productId);
     };
     chatArea.appendChild(chatBtn);
   }
 };
-
-document.getElementById("back-main-from-detail-btn").addEventListener("click", () => {
-  window.showMainScreen();
-});
