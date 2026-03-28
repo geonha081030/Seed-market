@@ -2,7 +2,7 @@ import { db, auth } from './firebase-config.js';
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 window.showProductDetailScreen = async (productId) => {
-  const screens = ["main-screen", "product-list-screen", "mypage-screen"];
+  const screens = ["main-screen", "product-list-screen", "mypage-screen", "chat-screen", "chat-list-screen"];
   screens.forEach(id => {
     const el = document.getElementById(id);
     if(el) el.style.display = "none";
@@ -10,7 +10,6 @@ window.showProductDetailScreen = async (productId) => {
   document.getElementById("product-detail-screen").style.display = "block";
 
   const snap = await getDoc(doc(db, "products", productId));
-  if (!snap.exists()) return alert("삭제된 상품입니다.");
   const product = snap.data();
 
   document.getElementById("detail-title").textContent = product.title;
@@ -20,23 +19,18 @@ window.showProductDetailScreen = async (productId) => {
   const chatArea = document.getElementById("detail-chat-area");
   chatArea.innerHTML = "";
 
-  // 내가 올린 상품이 아닐 때만 채팅하기 버튼 표시
   if (product.sellerEmail !== auth.currentUser.email) {
     const chatBtn = document.createElement("button");
     chatBtn.textContent = "판매자와 채팅하기";
     chatBtn.onclick = () => {
-      if(!product.sellerUid) return alert("판매자 정보가 없는 상품입니다. 새 상품으로 테스트하세요.");
+      if(!product.sellerUid) return alert("판매자 정보가 없는 상품입니다. 새 상품을 등록해 주세요.");
       
-      // 고정 규칙: 구매자UID_판매자UID_상품ID
-      const roomId = `${auth.currentUser.uid}_${product.sellerUid}_${productId}`;
+      // ⭐ 핵심: 두 사용자의 UID를 정렬하여 항상 동일한 roomId 생성
+      const ids = [auth.currentUser.uid, product.sellerUid].sort();
+      const roomId = `${ids[0]}_${ids[1]}_${productId}`;
+      
       window.openChat(roomId, product.title);
     };
     chatArea.appendChild(chatBtn);
-  } else {
-    chatArea.innerHTML = "<p style='color:blue; font-size:12px;'>내가 등록한 상품입니다.</p>";
   }
 };
-
-document.getElementById("back-main-from-detail-btn").addEventListener("click", () => {
-  window.showMainScreen();
-});
