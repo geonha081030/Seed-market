@@ -3,9 +3,8 @@ import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, getDoc
 
 let chatUnsubscribe = null;
 
-// [1] 실시간 채팅창 열기
+// [1] 채팅창 열기
 window.openChat = (roomId, productTitle) => {
-  // 모든 화면 숨기기
   const screens = ["main-screen", "product-list-screen", "product-detail-screen", "mypage-screen", "chat-list-screen"];
   screens.forEach(id => { if(document.getElementById(id)) document.getElementById(id).style.display = "none"; });
   
@@ -23,7 +22,7 @@ window.openChat = (roomId, productTitle) => {
       const isMine = data.sender === auth.currentUser.email;
       const msgDiv = document.createElement("div");
       msgDiv.style.textAlign = isMine ? "right" : "left";
-      msgDiv.innerHTML = `<div style="display: inline-block; background: ${isMine ? '#ffd6e0' : '#fff'}; padding: 8px; border-radius: 10px; margin: 5px; border: 1px solid #ddd;">
+      msgDiv.innerHTML = `<div style="display: inline-block; background: ${isMine ? '#ffd6e0' : '#fff'}; padding: 8px; border-radius: 10px; margin: 5px; border: 1px solid #ddd; max-width: 80%;">
         <small style="display:block; font-size:10px; color:gray;">${data.sender.split('@')[0]}</small>
         ${data.text}</div>`;
       messageList.appendChild(msgDiv);
@@ -45,29 +44,47 @@ window.openChat = (roomId, productTitle) => {
   };
 };
 
-// [2] 내 채팅 목록 불러오기
+// [2] 내 채팅 목록 불러오기 (판매자/구매자 모두 확인 가능)
 window.loadChatList = async () => {
   const container = document.getElementById("chat-rooms-container");
-  container.innerHTML = "목록 불러오는 중...";
+  container.innerHTML = "채팅 목록을 불러오는 중...";
   const myUid = auth.currentUser.uid;
 
+  // 전체 채팅방 조회
   const snapshot = await getDocs(collection(db, "chats"));
   container.innerHTML = "";
 
-  let hasChat = false;
+  let foundRooms = false;
+
   snapshot.forEach(docSnap => {
     const roomId = docSnap.id;
+    // roomId 규칙: 구매자UID_판매자UID_상품ID
     if (roomId.includes(myUid)) {
-      hasChat = true;
+      foundRooms = true;
+      const parts = roomId.split("_");
+      const buyerUid = parts[0];
+      const sellerUid = parts[1];
+      
+      const role = (myUid === sellerUid) ? "판매중인 상품 문의" : "내가 보낸 문의";
+      
       const div = document.createElement("div");
       div.className = "product-item";
       div.style.cursor = "pointer";
-      div.innerHTML = `<strong>채팅방: ${roomId.substring(0, 15)}...</strong><br><small>클릭하여 입장</small>`;
-      div.onclick = () => window.openChat(roomId, "이전 대화");
+      div.style.borderLeft = (myUid === sellerUid) ? "5px solid #ffd6e0" : "5px solid #d6f5ff";
+      
+      div.innerHTML = `
+        <p style="margin:0;"><strong>${role}</strong></p>
+        <small>방 번호: ${roomId.substring(roomId.length - 5)}</small>
+      `;
+      
+      div.onclick = () => window.openChat(roomId, "채팅 대화");
       container.appendChild(div);
     }
   });
-  if (!hasChat) container.innerHTML = "<p>진행 중인 채팅이 없습니다.</p>";
+
+  if (!foundRooms) {
+    container.innerHTML = "<p style='padding:20px;'>진행 중인 채팅 대화가 없습니다.</p>";
+  }
 };
 
 document.getElementById("back-from-chat-btn").onclick = () => {
