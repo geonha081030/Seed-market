@@ -3,7 +3,6 @@ import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, getDoc
 
 let chatUnsubscribe = null;
 
-// [1] 채팅창 열기
 window.openChat = (roomId, productTitle) => {
   const screens = ["main-screen", "product-list-screen", "product-detail-screen", "mypage-screen", "chat-list-screen"];
   screens.forEach(id => { if(document.getElementById(id)) document.getElementById(id).style.display = "none"; });
@@ -30,11 +29,10 @@ window.openChat = (roomId, productTitle) => {
 
   document.getElementById("send-chat-btn").onclick = async () => {
     const input = document.getElementById("chat-input");
-    const text = input.value.trim();
-    if (!text) return;
+    if (!input.value.trim()) return;
     try {
       await addDoc(collection(db, "chats", roomId, "messages"), {
-        text: text,
+        text: input.value,
         sender: auth.currentUser.email,
         timestamp: serverTimestamp()
       });
@@ -43,81 +41,33 @@ window.openChat = (roomId, productTitle) => {
   };
 };
 
-// [2] 내 채팅 목록 불러오기 (진단 모드 포함)
 window.loadChatList = async () => {
   const container = document.getElementById("chat-rooms-container");
-  container.innerHTML = "<p>데이터 분석 중...</p>";
-  
-  // 로그인 체크
-  if (!auth.currentUser) {
-    container.innerHTML = "<p>로그인 정보가 없습니다.</p>";
-    return;
-  }
-  
+  container.innerHTML = "목록 확인 중...";
   const myUid = auth.currentUser.uid;
-  console.log("내 UID:", myUid); // 아이패드에서도 작동 확인용
 
   try {
     const snapshot = await getDocs(collection(db, "chats"));
-    container.innerHTML = `<h4>검색된 전체 방 개수: ${snapshot.size}개</h4>`; // 개수 먼저 표시
-    
-    let foundCount = 0;
+    container.innerHTML = "";
+    let count = 0;
 
     for (const roomDoc of snapshot.docs) {
-      const roomId = roomDoc.id;
-      
-      // 내 UID가 방 ID에 포함되어 있는지 아주 꼼꼼하게 체크
-      if (roomId.indexOf(myUid) !== -1) {
-        foundCount++;
-        const parts = roomId.split("_");
-        const productId = parts[2] || "";
+      if (roomDoc.id.includes(myUid)) {
+        count++;
+        const roomId = roomDoc.id;
+        const productId = roomId.split("_")[2];
 
-        // 상품 정보는 나중에 가져오더라도 일단 방부터 만듭니다.
         const div = document.createElement("div");
         div.className = "product-item";
         div.style.padding = "15px";
+        div.style.border = "1px solid #ddd";
         div.style.margin = "10px 0";
-        div.style.background = "#ffffff";
-        div.style.border = "2px solid #ffd6e0";
-        div.style.borderRadius = "10px";
-
-        // 기본 텍스트 설정
-        div.innerHTML = `
-          <div id="title-${roomId}">채팅방 로딩 중...</div>
-          <small style="color:gray;">방 ID: ${roomId.substring(0,10)}...</small>
-        `;
+        div.innerHTML = `<strong>채팅방 (${count})</strong><br><small>클릭하여 대화 참여</small>`;
         
         div.onclick = () => window.openChat(roomId, "채팅 대화");
         container.appendChild(div);
-
-        // 상품 제목 비동기로 업데이트
-        if (productId) {
-          getDoc(doc(db, "products", productId)).then(pSnap => {
-            if (pSnap.exists()) {
-              document.getElementById(`title-${roomId}`).innerHTML = `<b>${pSnap.data().title}</b>`;
-            } else {
-              document.getElementById(`title-${roomId}`).innerHTML = `<b>삭제된 상품 대화</b>`;
-            }
-          });
-        }
       }
     }
-
-    if (foundCount === 0) {
-      container.innerHTML += `
-        <div style="background:#fff3f3; padding:20px; border-radius:10px;">
-          <p>내 UID(${myUid.substring(0,5)}...)와 일치하는 방을 찾지 못했습니다.</p>
-          <p style="font-size:12px; color:red;">방금 채팅을 보낸 게 맞나요? 콘솔의 chats 컬렉션 문서를 삭제하고 새로 보내보세요.</p>
-        </div>`;
-    }
-
-  } catch (e) {
-    container.innerHTML = "에러 발생: " + e.message;
-  }
-};
-
-document.getElementById("back-from-chat-btn").onclick = () => {
-  if (chatUnsubscribe) chatUnsubscribe();
-  document.getElementById("chat-screen").style.display = "none";
-  window.showMainScreen();
+    if (count === 0) container.innerHTML = "진행 중인 채팅이 없습니다. (새 상품으로 다시 시도하세요)";
+  } catch (e) { alert(e.message); }
 };
