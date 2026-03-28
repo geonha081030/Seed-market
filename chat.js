@@ -8,7 +8,7 @@ window.openChat = (roomId, productTitle, productId) => {
   currentProductId = productId;
   document.getElementById("product-detail-screen").style.display = "none";
   document.getElementById("chat-screen").style.display = "block";
-  document.getElementById("chat-title").textContent = `[문의] ${productTitle}`;
+  document.getElementById("chat-title").textContent = productTitle;
 
   const messageList = document.getElementById("chat-messages");
   if (chatUnsubscribe) chatUnsubscribe();
@@ -21,7 +21,7 @@ window.openChat = (roomId, productTitle, productId) => {
       const isMine = data.sender === auth.currentUser.email;
       const msgDiv = document.createElement("div");
       msgDiv.className = isMine ? "msg mine" : "msg other";
-      msgDiv.innerHTML = `<div class="bubble"><small>${data.sender.split('@')[0]}</small><p>${data.text}</p></div>`;
+      msgDiv.innerHTML = `<div class="bubble"><p>${data.text}</p></div>`;
       messageList.appendChild(msgDiv);
     });
     messageList.scrollTop = messageList.scrollHeight;
@@ -29,18 +29,19 @@ window.openChat = (roomId, productTitle, productId) => {
 
   document.getElementById("send-chat-btn").onclick = async () => {
     const input = document.getElementById("chat-input");
-    if (!input.value.trim()) return;
-    await addDoc(collection(db, "chats", roomId, "messages"), {
-      text: input.value,
-      sender: auth.currentUser.email,
-      timestamp: serverTimestamp()
-    });
-    input.value = "";
-  };
-};
+    const text = input.value.trim();
+    if (!text) return;
 
-document.getElementById("back-from-chat-btn").onclick = () => {
-  if (chatUnsubscribe) chatUnsubscribe();
-  document.getElementById("chat-screen").style.display = "none";
-  window.showProductDetailScreen(currentProductId);
+    try {
+      await addDoc(collection(db, "chats", roomId, "messages"), {
+        text: text,
+        sender: auth.currentUser.email,
+        timestamp: serverTimestamp()
+      });
+      input.value = "";
+    } catch (e) {
+      // 아이패드에서도 에러를 볼 수 있게 alert 추가
+      alert("전송 실패 원인: " + e.message);
+    }
+  };
 };
