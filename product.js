@@ -1,26 +1,27 @@
 import { db, auth } from './firebase-config.js';
 import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-document.getElementById("add-product-btn").addEventListener("click", async () => {
+document.getElementById("add-product-btn").onclick = async () => {
   const title = document.getElementById("product-title").value;
   const price = document.getElementById("product-price").value;
   const description = document.getElementById("product-desc").value;
 
-  if (!title || !price) return alert("내용을 입력해주세요.");
+  if (!auth.currentUser) return alert("로그인이 필요합니다.");
+  if (!title || !price) return alert("제목과 가격을 입력해주세요.");
 
   try {
     await addDoc(collection(db, "products"), {
-      title,
+      title: title,
       price: parseInt(price),
-      description,
+      description: description,
       sellerEmail: auth.currentUser.email,
-      sellerUid: auth.currentUser.uid,
+      sellerUid: auth.currentUser.uid, // 이게 꼭 있어야 채팅이 됩니다!
       sold: false,
       createdAt: serverTimestamp()
     });
     alert("상품 등록 완료!");
     window.showProductListScreen();
   } catch (e) {
-    alert("등록 실패: " + e.message);
+    alert("등록 에러: " + e.message);
   }
-});
+};
