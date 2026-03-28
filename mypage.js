@@ -45,14 +45,14 @@ window.showMyPage = async () => {
 document.getElementById("go-mypage-btn").onclick = () => window.showMyPage();
 document.getElementById("back-main-from-mypage-btn").onclick = () => window.showMainScreen();
 
-// 채팅 목록으로 가기
+// [추가] 채팅 목록 이동 버튼
 document.getElementById("go-chat-list-btn").onclick = () => {
   document.getElementById("mypage-screen").style.display = "none";
   document.getElementById("chat-list-screen").style.display = "block";
-  window.loadChatList();
+  window.loadChatList(); 
 };
 
-// 마이페이지로 돌아오기
+// [추가] 채팅 목록에서 돌아오기
 document.getElementById("back-mypage-from-chatlist-btn").onclick = () => {
   document.getElementById("chat-list-screen").style.display = "none";
   document.getElementById("mypage-screen").style.display = "block";
