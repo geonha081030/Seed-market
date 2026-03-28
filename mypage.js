@@ -1,9 +1,7 @@
 import { db, auth } from './firebase-config.js';
-import { collection, getDocs, doc, updateDoc } 
-from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+import { collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 window.showMyPage = async () => {
-
   document.getElementById("main-screen").style.display = "none";
   document.getElementById("mypage-screen").style.display = "block";
 
@@ -11,18 +9,17 @@ window.showMyPage = async () => {
   document.getElementById("my-email").textContent = email;
 
   const listDiv = document.getElementById("my-products");
-  listDiv.innerHTML = "";
+  listDiv.innerHTML = "로딩 중...";
 
   const snapshot = await getDocs(collection(db, "products"));
+  listDiv.innerHTML = "";
 
   snapshot.forEach(docSnap => {
     const product = docSnap.data();
-
     if (product.sellerEmail !== email) return;
 
     const div = document.createElement("div");
     div.classList.add("product-item");
-
     if (product.sold) div.classList.add("sold");
 
     div.innerHTML = `
@@ -33,25 +30,30 @@ window.showMyPage = async () => {
 
     if (!product.sold) {
       const btn = document.createElement("button");
-      btn.textContent = "판매완료";
-
+      btn.textContent = "판매완료 처리";
       btn.onclick = async () => {
         const ref = doc(db, "products", docSnap.id);
         await updateDoc(ref, { sold: true });
-        showMyPage();
+        window.showMyPage();
       };
-
       div.appendChild(btn);
     }
-
     listDiv.appendChild(div);
   });
 };
 
-document.getElementById("go-mypage-btn").addEventListener("click", () => {
-  window.showMyPage();
-});
+document.getElementById("go-mypage-btn").onclick = () => window.showMyPage();
+document.getElementById("back-main-from-mypage-btn").onclick = () => window.showMainScreen();
 
-document.getElementById("back-main-from-mypage-btn").addEventListener("click", () => {
-  window.showMainScreen();
-});
+// 채팅 목록으로 가기
+document.getElementById("go-chat-list-btn").onclick = () => {
+  document.getElementById("mypage-screen").style.display = "none";
+  document.getElementById("chat-list-screen").style.display = "block";
+  window.loadChatList();
+};
+
+// 마이페이지로 돌아오기
+document.getElementById("back-mypage-from-chatlist-btn").onclick = () => {
+  document.getElementById("chat-list-screen").style.display = "none";
+  document.getElementById("mypage-screen").style.display = "block";
+};
