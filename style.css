@@ -1,119 +1,43 @@
-/* 전체 기본 */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #fefefe;
-  margin: 0;
-  padding: 0;
-  text-align: center;
-}
-
-/* 화면 박스 */
-div {
-  margin-top: 40px;
-}
-
-/* 제목 */
-h2, h3 {
-  color: #555;
-}
-
-/* 입력칸 */
-input, textarea {
-  display: block;
-  margin: 12px auto;
-  padding: 14px;
-  width: 320px;
-  border-radius: 12px;
-  border: 1px solid #ddd;
-  font-size: 16px;
-  background-color: #fffdfd;
-}
-
-/* 버튼 기본 */
-button {
-  display: block;
-  margin: 10px auto;
-  padding: 14px;
-  width: 320px;
-  border-radius: 12px;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: 0.2s;
-}
-
-/* 버튼 색상 (파스텔톤) */
-button:nth-of-type(1) {
-  background-color: #ffd6e0; /* 핑크 */
-}
-
-button:nth-of-type(2) {
-  background-color: #d6f5ff; /* 하늘 */
-}
-
-button:nth-of-type(3) {
-  background-color: #e7ffd6; /* 연두 */
-}
-
-button:nth-of-type(4) {
-  background-color: #fff5cc; /* 노랑 */
-}
-
-/* 버튼 hover */
-button:hover {
-  opacity: 0.85;
-  transform: scale(1.02);
-}
-
-/* 상품 카드 */
-.product-item {
-  width: 340px;
-  margin: 15px auto;
+/* 채팅창 스타일 */
+#chat-messages {
+  height: 400px;
+  overflow-y: auto;
+  background-color: #f0f0f0;
   padding: 15px;
-  border-radius: 16px;
-  background-color: #f9f9ff;
-  border: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid #ddd;
+}
+
+.msg {
+  display: flex;
+  flex-direction: column;
+}
+
+.msg.mine { align-items: flex-end; }
+.msg.other { align-items: flex-start; }
+
+.bubble {
+  max-width: 70%;
+  padding: 10px;
+  border-radius: 12px;
+  position: relative;
   text-align: left;
 }
 
-/* 판매 완료 상품 (덜 눈에 띄게) */
-.product-item.sold {
-  background-color: #f3f3f3;
-  opacity: 0.6;
-}
+.msg.mine .bubble { background-color: #ffd6e0; border-bottom-right-radius: 2px; }
+.msg.other .bubble { background-color: #fff; border-bottom-left-radius: 2px; }
 
-/* 상품 제목 */
-.product-item h4 {
-  margin: 0 0 8px 0;
-  color: #444;
-}
+.bubble small { font-size: 10px; color: #777; display: block; margin-bottom: 4px; }
+.bubble p { margin: 0; font-size: 14px; }
 
-/* 가격 */
-.product-item p {
-  margin: 4px 0;
-}
-
-/* 판매완료 텍스트 */
-.sold-text {
-  color: #888;
-  font-size: 14px;
-}
-
-/* 상세페이지 */
-#product-detail-screen {
-  width: 350px;
-  margin: 0 auto;
-}
-
-/* 마이페이지 상품 */
-#mypage-screen .product-item {
-  background-color: #fff7fb;
-}
-
-/* 스크롤 영역 (나중 채팅 대비) */
-#chat-list {
-  border-radius: 10px;
+.chat-input-container {
+  display: flex;
   padding: 10px;
-  background-color: #fafafa;
+  background: white;
+  gap: 5px;
 }
+
+#chat-input { margin: 0; flex: 1; }
+#send-chat-btn { width: 80px; margin: 0; background-color: #d6f5ff; }
