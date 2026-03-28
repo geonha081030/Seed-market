@@ -3,17 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Seed Market - Total</title>
+  <title>Seed Market</title>
   <link rel="stylesheet" href="style.css">
-  <script type="importmap">
-    {
-      "imports": {
-        "firebase/app": "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js",
-        "firebase/auth": "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js",
-        "firebase/firestore": "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js"
-      }
-    }
-  </script>
 </head>
 <body>
 
@@ -30,7 +21,7 @@
     <input id="signup-email" placeholder="이메일">
     <input id="signup-password" type="password" placeholder="비밀번호">
     <button id="signup-btn">회원가입</button>
-    <button id="back-to-login-btn">뒤로가기</button>
+    <button id="back-to-login-btn">로그인 화면으로</button>
   </div>
 
   <div id="main-screen" style="display:none;">
@@ -38,6 +29,7 @@
     <button id="logout-btn">로그아웃</button>
     <button id="go-add-btn">상품 등록</button>
     <button id="go-list-btn">상품 목록</button>
+    <button id="go-mypage-btn">마이페이지</button>
   </div>
 
   <div id="product-add-screen" style="display:none;">
@@ -51,9 +43,9 @@
 
   <div id="product-list-screen" style="display:none;">
     <h3>상품 목록</h3>
-    <input id="product-search" placeholder="검색">
+    <input id="product-search" placeholder="상품명 검색">
     <div id="product-list"></div>
-    <button onclick="location.reload()">새로고침/메인</button>
+    <button id="back-main-from-list-btn">메인으로</button>
   </div>
 
   <div id="product-detail-screen" style="display:none;">
@@ -61,159 +53,35 @@
     <p id="detail-price"></p>
     <p id="detail-desc"></p>
     <div id="detail-chat-area"></div>
-    <button onclick="document.getElementById('product-detail-screen').style.display='none'; document.getElementById('product-list-screen').style.display='block';">목록으로</button>
+    <button id="back-main-from-detail-btn">메인으로</button>
   </div>
 
   <div id="chat-screen" style="display:none;">
     <h3 id="chat-title">채팅창</h3>
-    <div id="chat-messages" style="height:300px; overflow-y:auto; background:#eee; padding:10px; margin:10px; border-radius:10px; display:flex; flex-direction:column;"></div>
-    <div style="display:flex; padding:10px; gap:5px;">
-      <input id="chat-input" placeholder="내용 입력" style="flex:1; margin:0;">
-      <button id="send-chat-btn" style="width:70px; margin:0;">전송</button>
+    <div id="chat-messages">
+      </div>
+    <div class="chat-input-container">
+      <input id="chat-input" placeholder="메시지를 입력하세요">
+      <button id="send-chat-btn">전송</button>
     </div>
-    <button id="back-from-chat-btn">뒤로가기</button>
+    <button id="back-from-chat-btn">상세보기로</button>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "firebase/app";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
-    import { getFirestore, collection, addDoc, getDoc, getDocs, doc, query, orderBy, onSnapshot, serverTimestamp } from "firebase/firestore";
+  <div id="mypage-screen" style="display:none;">
+    <h3>마이페이지</h3>
+    <p id="my-email"></p>
+    <h4>내 상품</h4>
+    <div id="my-products"></div>
+    <button id="back-main-from-mypage-btn">메인으로</button>
+  </div>
 
-    // 1. 설정 (수정하지 마세요)
-    const firebaseConfig = {
-      apiKey: "AIzaSyDWRr2ex8Pxat6juTNfk42nVkxN_5QkRxg",
-      authDomain: "seedmarket-2d350.firebaseapp.com",
-      projectId: "seedmarket-2d350",
-      storageBucket: "seedmarket-2d350.firebasestorage.app",
-      messagingSenderId: "219597982647",
-      appId: "1:219597982647:web:2604bef7220cd2e668b632"
-    };
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="auth.js"></script>
+  <script type="module" src="product.js"></script>
+  <script type="module" src="product-list.js"></script>
+  <script type="module" src="product-detail.js"></script>
+  <script type="module" src="chat.js"></script>
+  <script type="module" src="mypage.js"></script>
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // 2. 화면 제어 함수
-    function showScreen(id) {
-      ["login-screen", "signup-screen", "main-screen", "product-add-screen", "product-list-screen", "product-detail-screen", "chat-screen"].forEach(s => {
-        document.getElementById(s).style.display = (s === id) ? "block" : "none";
-      });
-    }
-
-    // 3. 인증 로직
-    document.getElementById("login-btn").onclick = async () => {
-      try {
-        await signInWithEmailAndPassword(auth, document.getElementById("login-email").value, document.getElementById("login-password").value);
-        showScreen("main-screen");
-      } catch(e) { alert("로그인 실패: " + e.message); }
-    };
-
-    document.getElementById("show-signup-btn").onclick = () => showScreen("signup-screen");
-    document.getElementById("back-to-login-btn").onclick = () => showScreen("login-screen");
-    document.getElementById("logout-btn").onclick = () => signOut(auth);
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) showScreen("main-screen");
-      else showScreen("login-screen");
-    });
-
-    // 4. 상품 등록 및 목록
-    document.getElementById("go-add-btn").onclick = () => showScreen("product-add-screen");
-    document.getElementById("back-main-btn").onclick = () => showScreen("main-screen");
-
-    document.getElementById("add-product-btn").onclick = async () => {
-      const title = document.getElementById("product-title").value;
-      const price = document.getElementById("product-price").value;
-      if(!title || !price) return alert("입력해주세요");
-      try {
-        await addDoc(collection(db, "products"), {
-          title, price, description: document.getElementById("product-desc").value,
-          sellerEmail: auth.currentUser.email, sellerUid: auth.currentUser.uid,
-          createdAt: serverTimestamp()
-        });
-        alert("등록 완료!");
-        location.reload();
-      } catch(e) { alert(e.message); }
-    };
-
-    document.getElementById("go-list-btn").onclick = async () => {
-      showScreen("product-list-screen");
-      const listDiv = document.getElementById("product-list");
-      listDiv.innerHTML = "로딩 중...";
-      const snap = await getDocs(collection(db, "products"));
-      listDiv.innerHTML = "";
-      snap.forEach(docSnap => {
-        const p = docSnap.data();
-        const div = document.createElement("div");
-        div.className = "product-item";
-        div.innerHTML = `<h4>${p.title}</h4><p>${p.price}원</p>`;
-        const btn = document.createElement("button");
-        btn.textContent = "상세보기";
-        btn.onclick = () => openDetail(docSnap.id);
-        div.appendChild(btn);
-        listDiv.appendChild(div);
-      });
-    };
-
-    async function openDetail(id) {
-      const snap = await getDoc(doc(db, "products", id));
-      const p = snap.data();
-      showScreen("product-detail-screen");
-      document.getElementById("detail-title").innerText = p.title;
-      document.getElementById("detail-price").innerText = p.price + "원";
-      document.getElementById("detail-desc").innerText = p.description;
-      
-      const chatArea = document.getElementById("detail-chat-area");
-      chatArea.innerHTML = "";
-      if(p.sellerEmail !== auth.currentUser.email) {
-        const btn = document.createElement("button");
-        btn.textContent = "판매자와 채팅하기";
-        btn.onclick = () => startChat(id, p.title, p.sellerUid);
-        chatArea.appendChild(btn);
-      }
-    }
-
-    // 5. 채팅 핵심 로직 (통합)
-    let unsubscribe = null;
-    function startChat(productId, title, sellerUid) {
-      showScreen("chat-screen");
-      document.getElementById("chat-title").innerText = title;
-      const roomId = [auth.currentUser.uid, sellerUid].sort().join("_") + "_" + productId;
-      
-      if(unsubscribe) unsubscribe();
-      const q = query(collection(db, "chats", roomId, "messages"), orderBy("timestamp", "asc"));
-      
-      unsubscribe = onSnapshot(q, (snap) => {
-        const msgDiv = document.getElementById("chat-messages");
-        msgDiv.innerHTML = "";
-        snap.forEach(d => {
-          const data = d.data();
-          const item = document.createElement("div");
-          const isMine = data.sender === auth.currentUser.email;
-          item.style.textAlign = isMine ? "right" : "left";
-          item.innerHTML = `<span style="background:${isMine?'#ffd6e0':'#fff'}; padding:5px 10px; border-radius:10px; margin:5px; display:inline-block;">${data.text}</span>`;
-          msgDiv.appendChild(item);
-        });
-        msgDiv.scrollTop = msgDiv.scrollHeight;
-      });
-
-      // 전송 버튼 클릭 이벤트 강제 할당
-      document.getElementById("send-chat-btn").onclick = async () => {
-        const input = document.getElementById("chat-input");
-        if(!input.value.trim()) return;
-        try {
-          await addDoc(collection(db, "chats", roomId, "messages"), {
-            text: input.value,
-            sender: auth.currentUser.email,
-            timestamp: serverTimestamp()
-          });
-          input.value = "";
-        } catch(e) { alert("전송 에러: " + e.message); }
-      };
-    }
-
-    document.getElementById("back-from-chat-btn").onclick = () => showScreen("product-list-screen");
-
-  </script>
 </body>
 </html>
