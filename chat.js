@@ -6,7 +6,7 @@ import {
 
 let unsubscribe = null;
 
-// 🔥 채팅 열기
+// 채팅 열기
 window.openChat = async (roomId, title, sellerUid) => {
   window.hideAll();
 
@@ -16,9 +16,11 @@ window.openChat = async (roomId, title, sellerUid) => {
   const box = document.getElementById("chat-messages");
   box.innerHTML = "";
 
-  // 🔥 채팅방 정보 저장 (핵심)
+  // 🔥 핵심 수정
+  const ids = [auth.currentUser.uid, sellerUid].sort();
+
   await setDoc(doc(db, "chats", roomId), {
-    participants: [auth.currentUser.uid, sellerUid],
+    participants: ids, // 🔥 항상 동일한 순서
     productTitle: title,
     updatedAt: serverTimestamp()
   }, { merge: true });
@@ -71,7 +73,7 @@ window.openChat = async (roomId, title, sellerUid) => {
   };
 };
 
-// 🔥 채팅 목록 (완전 안정)
+// 채팅 목록
 window.loadChatList = async () => {
   window.hideAll();
   document.getElementById("chat-list-screen").style.display = "block";
@@ -87,15 +89,12 @@ window.loadChatList = async () => {
   snapshot.forEach(docSnap => {
     const data = docSnap.data();
 
-    // 🔥 participants 기반 필터
     if (!data.participants || !data.participants.includes(uid)) return;
 
     const div = document.createElement("div");
     div.className = "product-item";
 
-    div.innerHTML = `
-      <strong>${data.productTitle || "채팅"}</strong>
-    `;
+    div.innerHTML = `<strong>${data.productTitle || "채팅"}</strong>`;
 
     div.onclick = () => window.openChat(docSnap.id, data.productTitle, data.participants[0]);
 
