@@ -1,13 +1,13 @@
 import { db, auth } from './firebase-config.js';
 import { 
   collection, addDoc, query, orderBy, onSnapshot, 
-  serverTimestamp, getDocs, collectionGroup 
+  serverTimestamp, getDocs, doc, setDoc 
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 let unsubscribe = null;
 
-// 채팅 열기
-window.openChat = (roomId, title) => {
+// 🔥 채팅 열기
+window.openChat = async (roomId, title, sellerUid) => {
   window.hideAll();
 
   document.getElementById("chat-screen").style.display = "block";
@@ -15,6 +15,13 @@ window.openChat = (roomId, title) => {
 
   const box = document.getElementById("chat-messages");
   box.innerHTML = "";
+
+  // 🔥 채팅방 정보 저장 (핵심)
+  await setDoc(doc(db, "chats", roomId), {
+    participants: [auth.currentUser.uid, sellerUid],
+    productTitle: title,
+    updatedAt: serverTimestamp()
+  }, { merge: true });
 
   if (unsubscribe) unsubscribe();
 
@@ -57,7 +64,6 @@ window.openChat = (roomId, title) => {
     await addDoc(collection(db, "chats", roomId, "messages"), {
       text: input.value,
       sender: auth.currentUser.email,
-      roomId: roomId,
       timestamp: serverTimestamp()
     });
 
@@ -65,7 +71,7 @@ window.openChat = (roomId, title) => {
   };
 };
 
-// 🔥🔥🔥 핵심 수정된 채팅 목록
+// 🔥 채팅 목록 (완전 안정)
 window.loadChatList = async () => {
   window.hideAll();
   document.getElementById("chat-list-screen").style.display = "block";
@@ -73,34 +79,30 @@ window.loadChatList = async () => {
   const container = document.getElementById("chat-rooms-container");
   container.innerHTML = "로딩중...";
 
-  const myEmail = auth.currentUser.email;
-
-  const snapshot = await getDocs(collectionGroup(db, "messages"));
-
-  const roomSet = new Set();
-
-  snapshot.forEach(doc => {
-    const data = doc.data();
-
-    // 🔥 핵심: roomId에 내가 포함되어 있으면 다 가져옴
-    if (data.roomId && data.roomId.includes(auth.currentUser.uid)) {
-      roomSet.add(data.roomId);
-    }
-  });
+  const uid = auth.currentUser.uid;
+  const snapshot = await getDocs(collection(db, "chats"));
 
   container.innerHTML = "";
 
-  roomSet.forEach(roomId => {
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data();
+
+    // 🔥 participants 기반 필터
+    if (!data.participants || !data.participants.includes(uid)) return;
+
     const div = document.createElement("div");
     div.className = "product-item";
-    div.innerHTML = `<strong>채팅방</strong>`;
 
-    div.onclick = () => window.openChat(roomId, "채팅");
+    div.innerHTML = `
+      <strong>${data.productTitle || "채팅"}</strong>
+    `;
+
+    div.onclick = () => window.openChat(docSnap.id, data.productTitle, data.participants[0]);
 
     container.appendChild(div);
   });
 
-  if (roomSet.size === 0) {
+  if (!container.innerHTML) {
     container.innerHTML = "채팅 없음";
   }
 };
