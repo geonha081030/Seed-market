@@ -25,6 +25,7 @@ window.showProductDetailScreen = async (productId) => {
     chatBtn.onclick = () => {
       if(!product.sellerUid) return alert("판매자 정보가 없는 상품입니다. 새 상품을 등록해 주세요.");
       
+      // ⭐ 핵심: 두 사용자의 UID를 정렬하여 항상 동일한 roomId 생성
       const ids = [auth.currentUser.uid, product.sellerUid].sort();
       const roomId = `${ids[0]}_${ids[1]}_${productId}`;
       
