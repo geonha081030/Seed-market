@@ -62,7 +62,7 @@ window.openChat = (roomId, title) => {
   };
 };
 
-// 채팅 목록
+// 🔥🔥🔥 핵심 수정 부분
 window.loadChatList = async () => {
   window.hideAll();
   document.getElementById("chat-list-screen").style.display = "block";
@@ -78,7 +78,15 @@ window.loadChatList = async () => {
   snapshot.forEach(docSnap => {
     const roomId = docSnap.id;
 
-    if (!roomId.split("_").includes(uid)) return;
+    // 🔥 핵심: 앞 두 UID만 비교
+    const parts = roomId.split("_");
+
+    if (parts.length < 3) return;
+
+    const user1 = parts[0];
+    const user2 = parts[1];
+
+    if (uid !== user1 && uid !== user2) return;
 
     const div = document.createElement("div");
     div.className = "product-item";
@@ -94,7 +102,7 @@ window.loadChatList = async () => {
   }
 };
 
-// 뒤로가기 (🔥 핵심 추가)
+// 뒤로가기
 document.getElementById("back-from-chat-btn").onclick = () => {
   if (unsubscribe) unsubscribe();
   window.showMainScreen();
