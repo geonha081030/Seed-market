@@ -1,29 +1,21 @@
-/* 전체 기본 */
+/* 기본 스타일 */
 body { font-family: Arial, sans-serif; background-color: #fefefe; margin: 0; padding: 0; text-align: center; }
-div { margin-top: 40px; }
+div[id$="-screen"] { margin-top: 40px; }
 h2, h3 { color: #555; }
-input, textarea { display: block; margin: 12px auto; padding: 14px; width: 320px; border-radius: 12px; border: 1px solid #ddd; font-size: 16px; background-color: #fffdfd; }
-
-button { display: block; margin: 10px auto; padding: 14px; width: 320px; border-radius: 12px; border: none; font-size: 16px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+input, textarea { display: block; margin: 12px auto; padding: 14px; width: 320px; border-radius: 12px; border: 1px solid #ddd; font-size: 16px; box-sizing: border-box; }
+button { display: block; margin: 10px auto; padding: 14px; width: 320px; border-radius: 12px; border: none; font-size: 16px; cursor: pointer; font-weight: bold; }
 button:nth-of-type(1) { background-color: #ffd6e0; }
 button:nth-of-type(2) { background-color: #d6f5ff; }
-button:nth-of-type(3) { background-color: #e7ffd6; }
-button:nth-of-type(4) { background-color: #fff5cc; }
-button:hover { opacity: 0.85; transform: scale(1.02); }
+button:hover { opacity: 0.8; }
 
-.product-item { width: 340px; margin: 15px auto; padding: 15px; border-radius: 16px; background-color: #f9f9ff; border: 1px solid #eee; text-align: left; }
-.product-item.sold { background-color: #f3f3f3; opacity: 0.6; }
-
-/* 채팅 디자인 */
-#chat-messages { height: 400px; overflow-y: auto; background-color: #f0f0f0; padding: 15px; display: flex; flex-direction: column; gap: 10px; border: 1px solid #ddd; width: 350px; margin: 0 auto; }
+/* 상품 및 채팅 레이아웃 */
+.product-item { width: 340px; margin: 15px auto; padding: 15px; border-radius: 16px; background-color: #f9f9ff; border: 1px solid #eee; text-align: left; box-sizing: border-box; }
+#chat-messages { height: 400px; overflow-y: auto; background-color: #f0f0f0; padding: 15px; display: flex; flex-direction: column; gap: 10px; width: 350px; margin: 0 auto; border: 1px solid #ddd; border-radius: 10px; }
 .msg { display: flex; flex-direction: column; }
 .msg.mine { align-items: flex-end; }
 .msg.other { align-items: flex-start; }
-.bubble { max-width: 70%; padding: 10px; border-radius: 12px; text-align: left; }
-.msg.mine .bubble { background-color: #ffd6e0; border-bottom-right-radius: 2px; }
-.msg.other .bubble { background-color: #fff; border-bottom-left-radius: 2px; }
-.bubble small { font-size: 10px; color: #777; }
-.bubble p { margin: 0; font-size: 14px; }
-.chat-input-container { display: flex; width: 350px; margin: 0 auto; padding: 10px; background: white; gap: 5px; box-sizing: border-box; }
+.bubble { max-width: 70%; padding: 10px; border-radius: 12px; background: white; }
+.msg.mine .bubble { background-color: #ffd6e0; }
+.chat-input-container { display: flex; width: 350px; margin: 10px auto; gap: 5px; }
 #chat-input { margin: 0; flex: 1; width: auto; }
 #send-chat-btn { width: 70px; margin: 0; background-color: #d6f5ff; }
