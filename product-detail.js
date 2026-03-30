@@ -3,7 +3,7 @@ import { doc, getDoc }
 from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 window.showProductDetailScreen = async (productId) => {
-  hideAll();
+  window.hideAll();
   document.getElementById("product-detail-screen").style.display = "block";
 
   const snap = await getDoc(doc(db, "products", productId));
@@ -18,13 +18,19 @@ window.showProductDetailScreen = async (productId) => {
 
   // 🔥 채팅 버튼
   if (product.sellerEmail !== auth.currentUser.email && product.sellerUid) {
+
     const btn = document.createElement("button");
     btn.textContent = "채팅하기";
 
     btn.onclick = () => {
+
+      // 🔥 핵심: UID 정렬 (절대 순서 안 바뀜)
       const ids = [auth.currentUser.uid, product.sellerUid].sort();
-      const roomId = `${ids[0]}_${ids[1]}_${productId}`;
-      openChat(roomId, product.title);
+
+      // 🔥 핵심: productId 포함해서 동일 방 보장
+      const roomId = ids.join("_") + "_" + productId;
+
+      window.openChat(roomId, product.title);
     };
 
     chatArea.appendChild(btn);
@@ -33,5 +39,5 @@ window.showProductDetailScreen = async (productId) => {
 
 // 뒤로가기
 document.getElementById("back-main-from-detail-btn").onclick = () => {
-  showMainScreen();
+  window.showMainScreen();
 };
