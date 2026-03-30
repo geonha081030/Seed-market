@@ -37,12 +37,10 @@ window.showProducts = async () => {
   });
 };
 
-// 검색
 document.getElementById("product-search").addEventListener("input", () => {
   window.showProducts();
 });
 
-// 이동
 document.getElementById("go-list-btn").addEventListener("click", () => {
   window.showProductListScreen();
 });
