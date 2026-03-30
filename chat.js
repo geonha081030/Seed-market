@@ -57,15 +57,15 @@ window.openChat = (roomId, title) => {
     await addDoc(collection(db, "chats", roomId, "messages"), {
       text: input.value,
       sender: auth.currentUser.email,
-      timestamp: serverTimestamp(),
-      roomId: roomId // 🔥 핵심
+      roomId: roomId,
+      timestamp: serverTimestamp()
     });
 
     input.value = "";
   };
 };
 
-// 🔥🔥🔥 핵심: 메시지 기준으로 채팅방 찾기
+// 🔥🔥🔥 핵심 수정된 채팅 목록
 window.loadChatList = async () => {
   window.hideAll();
   document.getElementById("chat-list-screen").style.display = "block";
@@ -73,9 +73,8 @@ window.loadChatList = async () => {
   const container = document.getElementById("chat-rooms-container");
   container.innerHTML = "로딩중...";
 
-  const email = auth.currentUser.email;
+  const myEmail = auth.currentUser.email;
 
-  // 🔥 모든 messages 조회
   const snapshot = await getDocs(collectionGroup(db, "messages"));
 
   const roomSet = new Set();
@@ -83,8 +82,8 @@ window.loadChatList = async () => {
   snapshot.forEach(doc => {
     const data = doc.data();
 
-    // 🔥 내가 참여한 메시지만
-    if (data.sender === email) {
+    // 🔥 핵심: roomId에 내가 포함되어 있으면 다 가져옴
+    if (data.roomId && data.roomId.includes(auth.currentUser.uid)) {
       roomSet.add(data.roomId);
     }
   });
