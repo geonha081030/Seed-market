@@ -1,13 +1,13 @@
 import { db, auth } from './firebase-config.js';
 import { 
   collection, addDoc, query, orderBy, onSnapshot, 
-  serverTimestamp, getDocs, doc, setDoc 
+  serverTimestamp, getDocs, collectionGroup 
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 let unsubscribe = null;
 
-// 🔥 채팅 열기
-window.openChat = async (roomId, title, sellerUid) => {
+// 채팅 열기
+window.openChat = (roomId, title) => {
   window.hideAll();
 
   document.getElementById("chat-screen").style.display = "block";
@@ -15,12 +15,6 @@ window.openChat = async (roomId, title, sellerUid) => {
 
   const box = document.getElementById("chat-messages");
   box.innerHTML = "";
-
-  // 🔥 핵심: 채팅방에 참여자 저장
-  await setDoc(doc(db, "chats", roomId), {
-    participants: [auth.currentUser.uid, sellerUid],
-    updatedAt: serverTimestamp()
-  }, { merge: true });
 
   if (unsubscribe) unsubscribe();
 
@@ -63,14 +57,15 @@ window.openChat = async (roomId, title, sellerUid) => {
     await addDoc(collection(db, "chats", roomId, "messages"), {
       text: input.value,
       sender: auth.currentUser.email,
-      timestamp: serverTimestamp()
+      timestamp: serverTimestamp(),
+      roomId: roomId // 🔥 핵심
     });
 
     input.value = "";
   };
 };
 
-// 🔥 채팅 목록 (완전 정확)
+// 🔥🔥🔥 핵심: 메시지 기준으로 채팅방 찾기
 window.loadChatList = async () => {
   window.hideAll();
   document.getElementById("chat-list-screen").style.display = "block";
@@ -78,28 +73,35 @@ window.loadChatList = async () => {
   const container = document.getElementById("chat-rooms-container");
   container.innerHTML = "로딩중...";
 
-  const uid = auth.currentUser.uid;
+  const email = auth.currentUser.email;
 
-  const snapshot = await getDocs(collection(db, "chats"));
+  // 🔥 모든 messages 조회
+  const snapshot = await getDocs(collectionGroup(db, "messages"));
+
+  const roomSet = new Set();
+
+  snapshot.forEach(doc => {
+    const data = doc.data();
+
+    // 🔥 내가 참여한 메시지만
+    if (data.sender === email) {
+      roomSet.add(data.roomId);
+    }
+  });
 
   container.innerHTML = "";
 
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-
-    // 🔥 핵심: participants로 필터
-    if (!data.participants || !data.participants.includes(uid)) return;
-
+  roomSet.forEach(roomId => {
     const div = document.createElement("div");
     div.className = "product-item";
     div.innerHTML = `<strong>채팅방</strong>`;
 
-    div.onclick = () => window.openChat(docSnap.id, "채팅", data.participants[0]);
+    div.onclick = () => window.openChat(roomId, "채팅");
 
     container.appendChild(div);
   });
 
-  if (!container.innerHTML) {
+  if (roomSet.size === 0) {
     container.innerHTML = "채팅 없음";
   }
 };
