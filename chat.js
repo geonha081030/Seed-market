@@ -1,11 +1,13 @@
 import { db, auth } from './firebase-config.js';
-import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, getDocs } 
-from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+import { 
+  collection, addDoc, query, orderBy, onSnapshot, 
+  serverTimestamp, getDocs, doc, setDoc 
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 let unsubscribe = null;
 
 // 채팅 열기
-window.openChat = (roomId, title) => {
+window.openChat = async (roomId, title) => {
   window.hideAll();
 
   document.getElementById("chat-screen").style.display = "block";
@@ -13,6 +15,11 @@ window.openChat = (roomId, title) => {
 
   const box = document.getElementById("chat-messages");
   box.innerHTML = "";
+
+  // 🔥 핵심: 채팅방 문서 생성 (없으면 생성됨)
+  await setDoc(doc(db, "chats", roomId), {
+    createdAt: serverTimestamp()
+  }, { merge: true });
 
   if (unsubscribe) unsubscribe();
 
@@ -62,7 +69,7 @@ window.openChat = (roomId, title) => {
   };
 };
 
-// 🔥🔥🔥 핵심 수정 부분
+// 채팅 목록
 window.loadChatList = async () => {
   window.hideAll();
   document.getElementById("chat-list-screen").style.display = "block";
@@ -78,15 +85,10 @@ window.loadChatList = async () => {
   snapshot.forEach(docSnap => {
     const roomId = docSnap.id;
 
-    // 🔥 핵심: 앞 두 UID만 비교
     const parts = roomId.split("_");
-
     if (parts.length < 3) return;
 
-    const user1 = parts[0];
-    const user2 = parts[1];
-
-    if (uid !== user1 && uid !== user2) return;
+    if (parts[0] !== uid && parts[1] !== uid) return;
 
     const div = document.createElement("div");
     div.className = "product-item";
