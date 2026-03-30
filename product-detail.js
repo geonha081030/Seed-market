@@ -1,12 +1,9 @@
 import { db, auth } from './firebase-config.js';
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+import { doc, getDoc } 
+from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 window.showProductDetailScreen = async (productId) => {
-  const screens = ["main-screen", "product-list-screen", "mypage-screen", "chat-screen", "chat-list-screen"];
-  screens.forEach(id => {
-    const el = document.getElementById(id);
-    if(el) el.style.display = "none";
-  });
+  hideAll();
   document.getElementById("product-detail-screen").style.display = "block";
 
   const snap = await getDoc(doc(db, "products", productId));
@@ -19,18 +16,22 @@ window.showProductDetailScreen = async (productId) => {
   const chatArea = document.getElementById("detail-chat-area");
   chatArea.innerHTML = "";
 
-  if (product.sellerEmail !== auth.currentUser.email) {
-    const chatBtn = document.createElement("button");
-    chatBtn.textContent = "판매자와 채팅하기";
-    chatBtn.onclick = () => {
-      if(!product.sellerUid) return alert("판매자 정보가 없는 상품입니다. 새 상품을 등록해 주세요.");
-      
-      // ⭐ 핵심: 두 사용자의 UID를 정렬하여 항상 동일한 roomId 생성
+  // 🔥 채팅 버튼
+  if (product.sellerEmail !== auth.currentUser.email && product.sellerUid) {
+    const btn = document.createElement("button");
+    btn.textContent = "채팅하기";
+
+    btn.onclick = () => {
       const ids = [auth.currentUser.uid, product.sellerUid].sort();
       const roomId = `${ids[0]}_${ids[1]}_${productId}`;
-      
-      window.openChat(roomId, product.title);
+      openChat(roomId, product.title);
     };
-    chatArea.appendChild(chatBtn);
+
+    chatArea.appendChild(btn);
   }
+};
+
+// 뒤로가기
+document.getElementById("back-main-from-detail-btn").onclick = () => {
+  showMainScreen();
 };
