@@ -15,7 +15,7 @@ document.getElementById("add-product-btn").onclick = async () => {
       price: parseInt(price),
       description: description,
       sellerEmail: auth.currentUser.email,
-      sellerUid: auth.currentUser.uid, 
+      sellerUid: auth.currentUser.uid, // 이게 꼭 있어야 채팅이 됩니다!
       sold: false,
       createdAt: serverTimestamp()
     });
