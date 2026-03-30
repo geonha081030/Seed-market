@@ -11,7 +11,7 @@ function hideAll() {
   const screens = [
     "login-screen", "signup-screen", "main-screen", 
     "product-add-screen", "product-list-screen", 
-    "product-detail-screen", "mypage-screen", "chat-screen"
+    "product-detail-screen", "mypage-screen", "chat-list-screen", "chat-screen"
   ];
   screens.forEach(id => {
     const el = document.getElementById(id);
@@ -29,42 +29,43 @@ window.showProductListScreen = () => {
   if (window.showProducts) window.showProducts();
 };
 
-document.getElementById("show-signup-btn").addEventListener("click", window.showSignupScreen);
-document.getElementById("back-to-login-btn").addEventListener("click", window.showLoginScreen);
-document.getElementById("go-add-btn").addEventListener("click", window.showAddProductScreen);
-document.getElementById("back-main-btn").addEventListener("click", window.showMainScreen);
+document.getElementById("show-signup-btn").onclick = window.showSignupScreen;
+document.getElementById("back-to-login-btn").onclick = window.showLoginScreen;
+document.getElementById("go-add-btn").onclick = window.showAddProductScreen;
+document.getElementById("back-main-btn").onclick = window.showMainScreen;
+document.getElementById("go-list-btn").onclick = window.showProductListScreen;
 
-document.getElementById("signup-btn").addEventListener("click", async () => {
+document.getElementById("signup-btn").onclick = async () => {
   const email = document.getElementById("signup-email").value;
   const password = document.getElementById("signup-password").value;
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     await sendEmailVerification(userCredential.user);
-    alert("회원가입 완료! 이메일 인증 후 로그인하세요.");
+    alert("인증 메일을 보냈습니다. 확인 후 로그인하세요.");
     window.showLoginScreen();
-  } catch (e) { alert("회원가입 오류: " + e.message); }
-});
+  } catch (e) { alert(e.message); }
+};
 
-document.getElementById("login-btn").addEventListener("click", async () => {
+document.getElementById("login-btn").onclick = async () => {
   const email = document.getElementById("login-email").value;
   const password = document.getElementById("login-password").value;
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     if (!userCredential.user.emailVerified) {
-      alert("이메일 인증이 필요합니다.");
+      alert("이메일 인증을 완료해주세요.");
       await signOut(auth);
       return;
     }
     window.showMainScreen();
   } catch (e) { alert("로그인 실패: " + e.message); }
-});
+};
 
 onAuthStateChanged(auth, (user) => {
   if (user && user.emailVerified) window.showMainScreen();
   else window.showLoginScreen();
 });
 
-document.getElementById("logout-btn").addEventListener("click", async () => {
+document.getElementById("logout-btn").onclick = async () => {
   await signOut(auth);
   window.showLoginScreen();
-});
+};
