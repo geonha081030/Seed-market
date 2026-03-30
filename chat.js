@@ -6,7 +6,8 @@ let unsubscribe = null;
 
 // 채팅 열기
 window.openChat = (roomId, title) => {
-  hideAll();
+  window.hideAll();
+
   document.getElementById("chat-screen").style.display = "block";
   document.getElementById("chat-title").textContent = title;
 
@@ -17,22 +18,38 @@ window.openChat = (roomId, title) => {
 
   const q = query(collection(db, "chats", roomId, "messages"), orderBy("timestamp"));
 
-  unsubscribe = onSnapshot(q, snap => {
+  unsubscribe = onSnapshot(q, (snap) => {
     box.innerHTML = "";
+
     snap.forEach(doc => {
       const data = doc.data();
       const isMine = data.sender === auth.currentUser.email;
 
       const div = document.createElement("div");
-      div.className = isMine ? "msg mine" : "msg other";
-      div.innerHTML = `<div class="bubble"><p>${data.text}</p></div>`;
+      div.style.textAlign = isMine ? "right" : "left";
+
+      div.innerHTML = `
+        <div style="
+          display:inline-block;
+          background:${isMine ? '#ffd6e0' : '#fff'};
+          padding:10px;
+          border-radius:10px;
+          margin:5px;
+          border:1px solid #ddd;
+        ">
+          ${data.text}
+        </div>
+      `;
+
       box.appendChild(div);
     });
+
     box.scrollTop = box.scrollHeight;
   });
 
   document.getElementById("send-chat-btn").onclick = async () => {
     const input = document.getElementById("chat-input");
+
     if (!input.value.trim()) return;
 
     await addDoc(collection(db, "chats", roomId, "messages"), {
@@ -47,7 +64,7 @@ window.openChat = (roomId, title) => {
 
 // 채팅 목록
 window.loadChatList = async () => {
-  hideAll();
+  window.hideAll();
   document.getElementById("chat-list-screen").style.display = "block";
 
   const container = document.getElementById("chat-rooms-container");
@@ -58,14 +75,16 @@ window.loadChatList = async () => {
 
   container.innerHTML = "";
 
-  snapshot.forEach(doc => {
-    if (!doc.id.split("_").includes(uid)) return;
+  snapshot.forEach(docSnap => {
+    const roomId = docSnap.id;
+
+    if (!roomId.split("_").includes(uid)) return;
 
     const div = document.createElement("div");
     div.className = "product-item";
     div.innerHTML = `<strong>채팅방</strong>`;
 
-    div.onclick = () => openChat(doc.id, "채팅");
+    div.onclick = () => window.openChat(roomId, "채팅");
 
     container.appendChild(div);
   });
@@ -75,12 +94,12 @@ window.loadChatList = async () => {
   }
 };
 
-// 뒤로가기
+// 뒤로가기 (🔥 핵심 추가)
 document.getElementById("back-from-chat-btn").onclick = () => {
   if (unsubscribe) unsubscribe();
-  showMainScreen();
+  window.showMainScreen();
 };
 
 document.getElementById("back-mypage-from-chatlist-btn").onclick = () => {
-  showMyPage();
+  window.showMyPage();
 };
