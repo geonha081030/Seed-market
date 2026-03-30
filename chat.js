@@ -6,8 +6,8 @@ import {
 
 let unsubscribe = null;
 
-// 채팅 열기
-window.openChat = async (roomId, title) => {
+// 🔥 채팅 열기
+window.openChat = async (roomId, title, sellerUid) => {
   window.hideAll();
 
   document.getElementById("chat-screen").style.display = "block";
@@ -16,9 +16,10 @@ window.openChat = async (roomId, title) => {
   const box = document.getElementById("chat-messages");
   box.innerHTML = "";
 
-  // 🔥 핵심: 채팅방 문서 생성 (없으면 생성됨)
+  // 🔥 핵심: 채팅방에 참여자 저장
   await setDoc(doc(db, "chats", roomId), {
-    createdAt: serverTimestamp()
+    participants: [auth.currentUser.uid, sellerUid],
+    updatedAt: serverTimestamp()
   }, { merge: true });
 
   if (unsubscribe) unsubscribe();
@@ -69,7 +70,7 @@ window.openChat = async (roomId, title) => {
   };
 };
 
-// 채팅 목록
+// 🔥 채팅 목록 (완전 정확)
 window.loadChatList = async () => {
   window.hideAll();
   document.getElementById("chat-list-screen").style.display = "block";
@@ -78,23 +79,22 @@ window.loadChatList = async () => {
   container.innerHTML = "로딩중...";
 
   const uid = auth.currentUser.uid;
+
   const snapshot = await getDocs(collection(db, "chats"));
 
   container.innerHTML = "";
 
   snapshot.forEach(docSnap => {
-    const roomId = docSnap.id;
+    const data = docSnap.data();
 
-    const parts = roomId.split("_");
-    if (parts.length < 3) return;
-
-    if (parts[0] !== uid && parts[1] !== uid) return;
+    // 🔥 핵심: participants로 필터
+    if (!data.participants || !data.participants.includes(uid)) return;
 
     const div = document.createElement("div");
     div.className = "product-item";
     div.innerHTML = `<strong>채팅방</strong>`;
 
-    div.onclick = () => window.openChat(roomId, "채팅");
+    div.onclick = () => window.openChat(docSnap.id, "채팅", data.participants[0]);
 
     container.appendChild(div);
   });
